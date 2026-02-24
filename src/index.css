@@ -1,0 +1,39 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden;
+}
+
+html {
+    height: 100svh;
+    width: 100svw;
+}
+
+body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#root {
+    display: flex;
+}
+
+.app {
+    padding: 1rem;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
