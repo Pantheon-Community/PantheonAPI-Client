@@ -4,6 +4,9 @@ Barebones client for our API.
 
 This repository is intended to be used as an ancillary client for the [Pantheon API](https://github.com/Pantheon-Community/PantheonAPI).
 
+[![CI](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/ci.yml/badge.svg)](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/codeql-analysis.yml)
+
 ## Installation
 
 This assumes you have [git](https://git-scm.com/) and [Bun](https://bun.com/get) installed already.
