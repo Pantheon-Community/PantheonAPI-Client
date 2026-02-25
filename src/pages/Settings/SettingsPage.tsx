@@ -41,7 +41,7 @@ export const SettingsPage = () => {
 	}, [controller]);
 
 	return (
-		<section className="settings">
+		<section className="settings-page">
 			<h1>Settings</h1>
 
 			<div className="input-container">
