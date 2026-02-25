@@ -19,6 +19,7 @@
 
             > div.button-container {
                 display: flex;
+                gap: 0.5em;
             }
 
             > p {
@@ -51,6 +52,24 @@
             white-space: pre-wrap;
             overflow: auto;
             overflow-wrap: break-word;
+        }
+    }
+
+    .status {
+        color: rgba(255, 255, 255, 0.5);
+        min-width: 64px;
+        transition: all ease-in-out 100ms;
+
+        &.Checking {
+            color: yellow;
+        }
+
+        &.Bad {
+            color: lightcoral;
+        }
+
+        &.Ok {
+            color: lightgreen;
         }
     }
 }

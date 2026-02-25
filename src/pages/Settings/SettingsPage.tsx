@@ -1,11 +1,44 @@
-import { useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { SettingsContext } from "@/contexts/Settings";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
 import "./SettingsPage.css";
+import { GlobalContext } from "@/contexts/Global";
+
+enum ServerStatus {
+	Untested,
+	Checking,
+	Bad,
+	Ok,
+}
 
 export const SettingsPage = () => {
 	const { settings, sessionData, setValue, resetValue } = useContext(SettingsContext);
+
+	const { makeApiRequest } = useContext(GlobalContext);
+
+	const [serverStatus, setServerStatus] = useState(ServerStatus.Untested);
+
+	const [controller, setController] = useState<AbortController>();
+
+	const handleTestServer = useCallback(async () => {
+		setServerStatus(ServerStatus.Checking);
+
+		const localController = new AbortController();
+		setController(localController);
+
+		const result = await makeApiRequest("/", { signal: localController.signal });
+
+		setServerStatus(result ? ServerStatus.Ok : ServerStatus.Bad);
+	}, [makeApiRequest]);
+
+	useEffect(() => {
+		if (controller === undefined) return;
+
+		return () => {
+			controller.abort();
+		};
+	}, [controller]);
 
 	return (
 		<section className="settings">
@@ -30,6 +63,18 @@ export const SettingsPage = () => {
 						>
 							Reset
 						</button>
+
+						<button
+							type="button"
+							disabled={serverStatus === ServerStatus.Checking}
+							onClick={handleTestServer}
+						>
+							Test
+						</button>
+
+						<p className={`status ${ServerStatus[serverStatus]}`}>
+							{ServerStatus[serverStatus]}
+						</p>
 					</div>
 
 					<p>Endpoint to the Pantheon Community API.</p>

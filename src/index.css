@@ -49,10 +49,11 @@ h1, h2, h3, h4, h5, h6, p {
 button {
     cursor: pointer;
     border-style: solid;
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 0.25em;
     border-color: inherit;
     transition: all ease-out 100ms;
+    padding-inline: 0.5em;
 }
 
 button:disabled {
@@ -62,11 +63,12 @@ button:disabled {
 input {
     font-size: inherit;
     padding: 0.25em;
+    border-radius: 0.25em;
 }
 
 button:not(:disabled):active, button:not(:disabled):hover {
     border-style: solid;
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 0.25em;
 }
 
