@@ -1,15 +1,21 @@
-import { Navbar } from "./components/Navbar";
+import { Route, Routes } from "react-router";
+import { Sidebar } from "./components/Sidebar/Sidebar";
+import { HomePage } from "./pages/HomePage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { SettingsPage } from "./pages/Settings/SettingsPage";
+import { Providers } from "./providers/Providers";
 import "./index.css";
 
 export const App = () => (
-	<>
-		<Navbar />
+	<Providers>
+		<Sidebar />
 
 		<div className="app">
-			<h1>Bun + React</h1>
-			<p>
-				Edit <code>src/App.tsx</code> and save to test HMR
-			</p>
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route path="/settings" element={<SettingsPage />} />
+				<Route path="*" element={<NotFoundPage />} />
+			</Routes>
 		</div>
-	</>
+	</Providers>
 );

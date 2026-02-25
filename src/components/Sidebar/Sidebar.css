@@ -1,0 +1,27 @@
+.navbar {
+    background-color: #444444;
+    padding-block: 0.5rem;
+
+    h3 {
+        padding-inline: 0.5rem;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+
+        a {
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+            transition: all ease-out 100ms;
+        }
+
+        a:hover {
+            background-color: #333333
+        }
+
+        a.active {
+            color: aquamarine;
+        }
+    }
+}
