@@ -5,6 +5,11 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { SettingsPage } from "./pages/Settings/SettingsPage";
 import { Providers } from "./providers/Providers";
 import "./index.css";
+import hljs from "highlight.js/lib/common";
+import jsonLanguage from "highlight.js/lib/languages/json";
+import "highlight.js/styles/atom-one-dark.css";
+
+hljs.registerLanguage("json", jsonLanguage);
 
 export const App = () => (
 	<Providers>

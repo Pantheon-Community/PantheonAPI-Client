@@ -2,7 +2,7 @@ import { type FC, type ReactNode, useCallback, useEffect, useMemo, useState } fr
 import { SettingsContext } from "@/contexts/Settings";
 import type { SettingsContextType } from "@/contexts/Settings/SettingsTypes";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
-import { generateSessionData, getStoredSettings, saveStoredSettings } from "./SettingsHelpers";
+import { generateSessionData, getStoredSettings, saveStoredSettings } from "./settingsHelpers";
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [settings, setSettings] = useState(getStoredSettings);

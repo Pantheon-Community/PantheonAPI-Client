@@ -8,7 +8,7 @@ export const SettingsPage = () => {
 	const { settings, sessionData, setValue, resetValue } = useContext(SettingsContext);
 
 	return (
-		<div className="settings">
+		<section className="settings">
 			<h1>Settings</h1>
 
 			<div className="input-container">
@@ -172,6 +172,6 @@ export const SettingsPage = () => {
 				<p>State</p>
 				<pre>{sessionData.state}</pre>
 			</div>
-		</div>
+		</section>
 	);
 };

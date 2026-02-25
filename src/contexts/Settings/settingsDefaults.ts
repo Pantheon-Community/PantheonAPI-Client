@@ -7,7 +7,7 @@ function defaultServerUrl() {
 
 		serverUrl.port = "5000";
 
-		return serverUrl.toString();
+		return serverUrl.toString().slice(0, -1); // remove trailing "/"
 	}
 
 	return "https://api.pantheoncommunity.org";
