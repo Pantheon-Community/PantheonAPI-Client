@@ -1,21 +1,14 @@
-import hljs from "highlight.js/lib/common";
-import { type ToggleEvent, useCallback, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { LoginButton } from "@/components/Buttons/LoginButton";
 import { SessionContext } from "@/contexts/Session";
+import { useHighlightOn } from "@/hooks/useHighlightOn";
 
 export const ProfilePage = () => {
 	const { session } = useContext(SessionContext);
 
 	const [isShowingExtra, setIsShowingExtra] = useState(false);
 
-	const handleToggle = useCallback((e: ToggleEvent<HTMLDetailsElement>) => {
-		if (e.newState === "open") {
-			setIsShowingExtra(true);
-			hljs.highlightAll();
-		} else {
-			setIsShowingExtra(false);
-		}
-	}, []);
+	useHighlightOn(isShowingExtra);
 
 	if (session === null)
 		return (
@@ -34,7 +27,10 @@ export const ProfilePage = () => {
 
 			<p>What a beautiful profile.</p>
 
-			<details open={isShowingExtra} onToggle={handleToggle}>
+			<details
+				open={isShowingExtra}
+				onToggle={(e) => setIsShowingExtra(e.newState === "open")}
+			>
 				<summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
 
 				<pre>

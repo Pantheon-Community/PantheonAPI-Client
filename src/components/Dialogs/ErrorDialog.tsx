@@ -1,8 +1,8 @@
-import hljs from "highlight.js/lib/common";
-import { type FC, type ToggleEvent, useCallback, useState } from "react";
+import { type FC, useState } from "react";
 import { DialogBase } from "./DialogBase";
 import "./ErrorDialog.css";
 import type { ErrorData } from "@/contexts/Global/GlobalTypes";
+import { useHighlightOn } from "@/hooks/useHighlightOn";
 
 interface ErrorDialogProps {
 	errorData: ErrorData;
@@ -17,21 +17,17 @@ export const ErrorDialog: FC<ErrorDialogProps> = ({ errorData, onClose }) => {
 
 	const [isShowingExtra, setIsShowingExtra] = useState(false);
 
-	const handleToggle = useCallback((e: ToggleEvent<HTMLDetailsElement>) => {
-		if (e.newState === "open") {
-			setIsShowingExtra(true);
-			hljs.highlightAll();
-		} else {
-			setIsShowingExtra(false);
-		}
-	}, []);
+	useHighlightOn(isShowingExtra);
 
 	return (
 		<DialogBase title={title} onClose={onClose}>
 			<p>{description}</p>
 
 			{Object.keys(rest).length > 0 && (
-				<details open={isShowingExtra} onToggle={handleToggle}>
+				<details
+					open={isShowingExtra}
+					onToggle={(e) => setIsShowingExtra(e.newState === "open")}
+				>
 					<summary>{isShowingExtra ? "Hide" : "Show"} Additional Details</summary>
 
 					<pre>
