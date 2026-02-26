@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { FC, HTMLAttributeAnchorTarget, ReactNode } from "react";
 
 interface ExternalLinkProps {
 	href: string;
@@ -6,10 +6,12 @@ interface ExternalLinkProps {
 	title: string;
 
 	children: ReactNode;
+
+	target?: HTMLAttributeAnchorTarget;
 }
 
-export const ExternalLink: FC<ExternalLinkProps> = ({ href, title, children }) => (
-	<a rel="noopener noreferrer" href={href} title={title} target="_blank">
+export const ExternalLink: FC<ExternalLinkProps> = ({ href, title, children, target }) => (
+	<a rel="noopener noreferrer" href={href} title={title} target={target ?? "_blank"}>
 		{children}
 	</a>
 );
