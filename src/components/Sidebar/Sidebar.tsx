@@ -14,8 +14,6 @@ export const Sidebar = () => {
 			<nav>
 				<InternalLink href="/">Home</InternalLink>
 
-				<InternalLink href="/settings">Settings</InternalLink>
-
 				{session !== null && (
 					<InternalLink href="/profile">
 						<span className="inline-profile">
@@ -30,6 +28,8 @@ export const Sidebar = () => {
 						</span>
 					</InternalLink>
 				)}
+
+				<InternalLink href="/settings">Settings</InternalLink>
 			</nav>
 		</div>
 	);
