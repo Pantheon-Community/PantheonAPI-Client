@@ -18,9 +18,12 @@
             padding: 0.25rem 0.75rem;
             transition: all ease-out 100ms;
 
+            &:hover, &:focus-visible {
+                padding-left: 1.5em;
+            }
+
             &:hover, &:focus {
                 background-color: var(--bg-secondary);
-                padding-left: 1.5em;
             }
 
             &.active {
