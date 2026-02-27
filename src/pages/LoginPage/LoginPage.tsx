@@ -4,6 +4,8 @@ import { LoginButton } from "@/components/Buttons/LoginButton";
 import { SessionContext } from "@/contexts/Session";
 import { SettingsContext } from "@/contexts/Settings";
 import "./LoginPage.css";
+import { LogoutButton } from "@/components/Buttons/LogoutButton";
+import { InternalLink } from "@/components/Links/InternalLink";
 
 enum LoginState {
 	Init,
@@ -13,11 +15,13 @@ enum LoginState {
 	CrossSiteRequestForgery,
 
 	Redirecting,
+
+	AlreadyLoggedIn,
 }
 
 export const LoginPage: FC = () => {
 	const { sessionData } = useContext(SettingsContext);
-	const { requestLogin } = useContext(SessionContext);
+	const { session, requestLogin } = useContext(SessionContext);
 
 	const [searchParams] = useSearchParams();
 
@@ -29,6 +33,11 @@ export const LoginPage: FC = () => {
 
 	useEffect(() => {
 		if (loginState !== LoginState.Init) return;
+
+		if (session !== null) {
+			setLoginState(LoginState.AlreadyLoggedIn);
+			return;
+		}
 
 		// avoid double request in strict mode
 		if (isRequesting.current) return;
@@ -59,11 +68,23 @@ export const LoginPage: FC = () => {
 		return () => {
 			controller.abort();
 		};
-	}, [searchParams, loginState, navigate, requestLogin, sessionData.state]);
+	}, [searchParams, loginState, navigate, requestLogin, sessionData.state, session]);
 
 	return (
 		<section className="login-page">
 			<h1>Log In</h1>
+
+			{session !== null && (
+				<>
+					<p>
+						You're already logged in as <b>{session.user.username}</b>, silly!
+					</p>
+
+					<InternalLink href="/profile">Go to your profile</InternalLink>
+
+					<LogoutButton />
+				</>
+			)}
 
 			{loginState === LoginState.NoCode && (
 				<>
@@ -83,7 +104,17 @@ export const LoginPage: FC = () => {
 				</>
 			)}
 
-			<p>Logging you in...</p>
+			{(loginState === LoginState.Init || loginState === LoginState.Redirecting) && (
+				<p>Logging you in...</p>
+			)}
+
+			{session === null && loginState === LoginState.AlreadyLoggedIn && (
+				<>
+					<p>Well, you got what you wanted.</p>
+
+					<LoginButton />
+				</>
+			)}
 		</section>
 	);
 };

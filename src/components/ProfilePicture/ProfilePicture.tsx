@@ -1,6 +1,7 @@
-import { type FC, useMemo, useState } from "react";
+import { type FC, useMemo } from "react";
 import type { DiscordId } from "@/shared/types/Common";
 import "./ProfilePicture.css";
+import { LazyImage } from "../LazyImage/LazyImage";
 
 interface ProfilePictureProps {
 	id: DiscordId;
@@ -12,24 +13,33 @@ interface ProfilePictureProps {
 	size: number;
 }
 
+function getDefaultAvatar(id: DiscordId): string {
+	// How discord calculates default avatar.
+	// https://docs.discord.com/developers/reference#:~:text=%2A%2A,-In
+	// Haven't actually verified this returns the correct default avatar, but it returns AN avatar
+	// so good enough for me ¯\_(ツ)_/¯
+
+	const defaultId = Math.abs(Number(id) >> 22) % 6;
+
+	return `https://cdn.discordapp.com/embed/avatars/${defaultId}.png`;
+}
+
 export const ProfilePicture: FC<ProfilePictureProps> = ({ id, username, avatar, size }) => {
-	const [hasErrored, setHasErrored] = useState(false);
+	const fallbackSrc = useMemo(() => getDefaultAvatar(id), [id]);
 
-	const src = useMemo(() => {
-		if (avatar === null || hasErrored) {
-			const defaultId = Math.abs(Number(id) >> 22) % 6;
-
-			return `https://cdn.discordapp.com/embed/avatars/${defaultId}.png`;
+	const primarySrc = useMemo(() => {
+		if (avatar === null) {
+			return fallbackSrc;
 		}
 
 		return `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=${size * 2}`;
-	}, [avatar, hasErrored, id, size]);
+	}, [avatar, id, size, fallbackSrc]);
 
 	return (
-		<img
+		<LazyImage
 			className="profile-picture"
-			src={src}
-			onError={() => setHasErrored(true)}
+			primarySrc={primarySrc}
+			fallbackSrc={fallbackSrc}
 			alt={`Discord profile of ${username}`}
 			width={size}
 			height={size}

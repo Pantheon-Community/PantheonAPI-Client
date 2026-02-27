@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { SettingsContext } from "@/contexts/Settings";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
 import "./SettingsPage.css";
+import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { GlobalContext } from "@/contexts/Global";
 
 enum ServerStatus {
@@ -45,13 +45,17 @@ export const SettingsPage = () => {
 			<h1>Settings</h1>
 
 			<div className="input-container">
-				<div>
+				<form onSubmit={(e) => e.preventDefault()}>
 					<label>
 						<p>Server URL</p>
 
 						<input
+							type="text"
 							value={settings.serverUrl}
-							onChange={(e) => setValue("serverUrl", e.target.value)}
+							onChange={(e) => {
+								setValue("serverUrl", e.target.value);
+								setServerStatus(ServerStatus.Untested);
+							}}
 						/>
 					</label>
 
@@ -65,7 +69,7 @@ export const SettingsPage = () => {
 						</button>
 
 						<button
-							type="button"
+							type="submit"
 							disabled={serverStatus === ServerStatus.Checking}
 							onClick={handleTestServer}
 						>
@@ -78,7 +82,7 @@ export const SettingsPage = () => {
 					</div>
 
 					<p>Endpoint to the Pantheon Community API.</p>
-				</div>
+				</form>
 
 				<div>
 					<label>
@@ -209,10 +213,13 @@ export const SettingsPage = () => {
 			<h3>Advanced Stuff</h3>
 
 			<div className="extra-container">
-				<p>OAuth Link</p>
-				<pre>
-					{sessionData.oAuthLink} <CopyTextButton text={sessionData.oAuthLink} />
-				</pre>
+				<p>
+					<span>OAuth Link</span>
+
+					<CopyTextButton text={sessionData.oAuthLink} />
+				</p>
+
+				<pre>{sessionData.oAuthLink}</pre>
 
 				<p>State</p>
 				<pre>{sessionData.state}</pre>

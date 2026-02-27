@@ -18,5 +18,16 @@
             "source.fixAll.biome": "explicit",
             "source.removeUnusedImports": "explicit"
         }
-    }
+    },
+    "[css]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "vscode.css-language-features",
+    },
+    "css.format.enable": true,
+    "css.format.newlineBetweenRules": true,
+    "css.format.newlineBetweenSelectors": false,
+    "css.format.braceStyle": "collapse",
+    "css.format.maxPreserveNewLines": 0,
+    "css.format.preserveNewLines": true,
+    "css.format.spaceAroundSelectorSeparator": true
 }

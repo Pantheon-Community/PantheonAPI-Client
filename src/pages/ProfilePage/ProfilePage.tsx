@@ -1,14 +1,15 @@
 import { useContext, useState } from "react";
 import { LoginButton } from "@/components/Buttons/LoginButton";
+import { LogoutButton } from "@/components/Buttons/LogoutButton";
+import { RefreshButton } from "@/components/Buttons/RefreshButton";
 import { SessionContext } from "@/contexts/Session";
-import { useHighlightOn } from "@/hooks/useHighlightOn";
+import "./ProfilePage.css";
+import { CodeBlock } from "@/components/CodeBlock/CodeBlock";
 
 export const ProfilePage = () => {
 	const { session } = useContext(SessionContext);
 
 	const [isShowingExtra, setIsShowingExtra] = useState(false);
-
-	useHighlightOn(isShowingExtra);
 
 	if (session === null)
 		return (
@@ -22,10 +23,16 @@ export const ProfilePage = () => {
 		);
 
 	return (
-		<section>
+		<section className="profile-page">
 			<h1>{session?.user.username}</h1>
 
 			<p>What a beautiful profile.</p>
+
+			<div className="profile-buttons">
+				<LogoutButton />
+
+				<RefreshButton />
+			</div>
 
 			<details
 				open={isShowingExtra}
@@ -33,9 +40,7 @@ export const ProfilePage = () => {
 			>
 				<summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
 
-				<pre>
-					<code className="language-json">{JSON.stringify(session, undefined, 4)}</code>
-				</pre>
+				<CodeBlock>{session}</CodeBlock>
 			</details>
 		</section>
 	);

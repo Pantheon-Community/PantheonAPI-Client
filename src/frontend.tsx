@@ -8,9 +8,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
+import Background from "./images/Background.png";
 
-// biome-ignore lint/style/noNonNullAssertion: If root doesn't exist we all die.
-const elem = document.getElementById("root")!;
+const elem = document.body;
+
+elem.style.backgroundImage = `linear-gradient(-45deg, rgba(0,0,0,0.8)), url(${Background})`;
 
 const app = (
 	<StrictMode>

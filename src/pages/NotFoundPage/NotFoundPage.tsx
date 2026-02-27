@@ -1,3 +1,4 @@
+import { LazyImage } from "@/components/LazyImage/LazyImage";
 import amongus from "./images/amongus.png";
 import death from "./images/death.png";
 import sausage from "./images/sausage.jpg";
@@ -39,9 +40,7 @@ export const NotFoundPage = () => {
 
 			<p>{randomArt.current.caption}</p>
 
-			<div>
-				<img src={randomArt.current.imageSource} alt={randomArt.current.alt} />
-			</div>
+			<LazyImage primarySrc={randomArt.current.imageSource} alt={randomArt.current.alt} />
 		</section>
 	);
 };

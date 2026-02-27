@@ -17,7 +17,7 @@ export const App = () => (
 	<Providers>
 		<Sidebar />
 
-		<div className="app">
+		<main>
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/settings" element={<SettingsPage />} />
@@ -25,6 +25,6 @@ export const App = () => (
 				<Route path="/profile" element={<ProfilePage />} />
 				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
-		</div>
+		</main>
 	</Providers>
 );

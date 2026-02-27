@@ -25,9 +25,10 @@ export const RateLimitedDialog: FC<RateLimitedDialogProps> = ({ endsAt, onClose 
 	return (
 		<DialogBase title="Rate Limited" onClose={onClose}>
 			<p>Too many requests being made to the API.</p>
+
 			<p>
 				You can make requests again in <b>{expiresIn.toLocaleString()}</b> second
-				{expiresIn !== 1 ? "s" : ""}
+				{expiresIn !== 1 ? "s" : ""}.
 			</p>
 		</DialogBase>
 	);

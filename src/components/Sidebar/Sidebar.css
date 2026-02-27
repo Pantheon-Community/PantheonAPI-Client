@@ -1,36 +1,38 @@
 .sidebar {
-    background-color: #444444;
+    background-color: rgba(64, 64, 64, 0.4);
+    backdrop-filter: blur(8px);
     padding-block: 0.5rem;
-    box-shadow: 2px 0 2px #141414;
+    white-space: nowrap;
 
-    h3 {
+    > h4 {
         padding-inline: 0.75rem;
-        padding-bottom: 0.25rem;
+        padding-bottom: 0.5rem;
+        text-align: center;
     }
 
     nav {
         display: flex;
         flex-direction: column;
 
-        a {
-            text-decoration: none;
+        > a {
             padding: 0.25rem 0.75rem;
             transition: all ease-out 100ms;
-        }
 
-        a:hover {
-            background-color: #333333;
-        }
+            &:hover, &:focus {
+                background-color: var(--bg-secondary);
+                padding-left: 1.5em;
+            }
 
-        a.active {
-            color: aquamarine;
-        }
+            &.active {
+                background-color: var(--bg-tertiary);
+            }
 
-        .inline-profile {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
+            > .inline-profile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
         }
     }
 }

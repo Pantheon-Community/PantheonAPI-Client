@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import { type FC, type ReactNode, useEffect, useRef } from "react";
 import "./DialogBase.css";
 
 interface DialogBaseProps {
@@ -9,18 +9,24 @@ interface DialogBaseProps {
 	onClose(): void;
 }
 
-export const DialogBase: FC<DialogBaseProps> = ({ title, children, onClose }) => (
-	<div className="dialog-wrapper">
-		<dialog onClose={onClose} open closedby="any">
-			<h2>
-				<span>{title}</span>
+export const DialogBase: FC<DialogBaseProps> = ({ title, children, onClose }) => {
+	const ref = useRef<HTMLDialogElement>(null);
 
-				<button onClick={onClose} className="close-button" type="button">
-					Close
-				</button>
-			</h2>
+	useEffect(() => ref.current?.showModal(), []);
 
-			<div>{children}</div>
+	return (
+		<dialog ref={ref} onClose={onClose} closedby="any">
+			<div className="dialog-base">
+				<h2>
+					<span>{title}</span>
+
+					<button onClick={onClose} className="close-button" type="button">
+						Close
+					</button>
+				</h2>
+
+				<div>{children}</div>
+			</div>
 		</dialog>
-	</div>
-);
+	);
+};

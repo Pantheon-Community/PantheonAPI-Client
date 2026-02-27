@@ -2,7 +2,7 @@ import { type FC, useState } from "react";
 import { DialogBase } from "./DialogBase";
 import "./ErrorDialog.css";
 import type { ErrorData } from "@/contexts/Global/GlobalTypes";
-import { useHighlightOn } from "@/hooks/useHighlightOn";
+import { CodeBlock } from "../CodeBlock/CodeBlock";
 
 interface ErrorDialogProps {
 	errorData: ErrorData;
@@ -17,8 +17,6 @@ export const ErrorDialog: FC<ErrorDialogProps> = ({ errorData, onClose }) => {
 
 	const [isShowingExtra, setIsShowingExtra] = useState(false);
 
-	useHighlightOn(isShowingExtra);
-
 	return (
 		<DialogBase title={title} onClose={onClose}>
 			<p>{description}</p>
@@ -30,15 +28,14 @@ export const ErrorDialog: FC<ErrorDialogProps> = ({ errorData, onClose }) => {
 				>
 					<summary>{isShowingExtra ? "Hide" : "Show"} Additional Details</summary>
 
-					<pre>
-						<code className="language-json">{JSON.stringify(rest, undefined, 4)}</code>
-					</pre>
+					<CodeBlock>{rest}</CodeBlock>
 				</details>
 			)}
 
 			{status && (
-				<p className="status-text">
-					HTTP {status.code} - {status.text}
+				<p className="error-dialog-status-text">
+					HTTP {status.code}
+					{status.text && ` - ${status.text}`}
 				</p>
 			)}
 		</DialogBase>

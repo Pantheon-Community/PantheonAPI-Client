@@ -1,0 +1,18 @@
+.lazy-image {
+    display: flex;
+    animation: lazy-image-pulse 1s infinite alternate ease-in-out;
+
+    &.loaded {
+        animation: none;
+    }
+}
+
+@keyframes lazy-image-pulse {
+    from {
+        background-color: var(--bg-secondary);
+    }
+
+    to {
+        background-color: var(--bg-tertiary);
+    }
+}

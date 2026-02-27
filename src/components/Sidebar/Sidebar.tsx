@@ -9,7 +9,7 @@ export const Sidebar = () => {
 
 	return (
 		<div className="sidebar">
-			<h3>Pantheon API Client</h3>
+			<h4>Pantheon API Client</h4>
 
 			<nav>
 				<InternalLink href="/">Home</InternalLink>
