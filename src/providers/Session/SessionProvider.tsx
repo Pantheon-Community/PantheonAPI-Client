@@ -105,7 +105,7 @@ export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 		if (minutesTillExpiry > settings.maxRefreshMinutes) {
 			console.log(
-				`[SessionProvider] Session expires in ${minutesTillExpiry.toLocaleString()} minutes (${(minutesTillExpiry / 24).toLocaleString()} days), background refreshed scheduled`,
+				`[SessionProvider] Session expires in ${minutesTillExpiry.toLocaleString()} minutes (${(minutesTillExpiry / 60).toLocaleString()} hours), background refreshed scheduled`,
 			);
 
 			const timeout = setTimeout(requestRefresh, secondsTillExpiry * 1000);
