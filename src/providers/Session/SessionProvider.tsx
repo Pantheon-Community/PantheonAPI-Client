@@ -58,12 +58,10 @@ export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const requestLogout = useCallback(async () => {
 		if (session === null) return;
 
-		const response = await makeApiRequest("/logout", {
+		await makeApiRequest("/logout", {
 			method: "post",
 			headers: { authorization: `Bearer ${session.token}` },
 		});
-
-		if (response === false) return;
 
 		setSession(null);
 	}, [makeApiRequest, session]);
