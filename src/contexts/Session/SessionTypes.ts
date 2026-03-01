@@ -1,11 +1,11 @@
 import type { IsoString, UserToken } from "@/shared/types/Common";
-import type { SteamConnection } from "@/shared/types/SteamConnection";
+import type { SteamUser } from "@/shared/types/SteamUser";
 import type { User } from "@/shared/types/User";
 
 export interface UserSession {
 	readonly user: User;
 
-	readonly steamConnections: SteamConnection[];
+	readonly steamUsers: SteamUser[];
 
 	readonly expiresAt: IsoString;
 

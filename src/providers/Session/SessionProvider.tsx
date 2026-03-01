@@ -37,14 +37,7 @@ export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 			if (response === null) return;
 
-			setSession({
-				user: response.user,
-				steamConnections: response.steamConnections,
-				expiresAt: new Date(Date.now() + response.expiresIn * 1000).toISOString(),
-				token: response.token,
-			});
-
-			return;
+			setSession(response);
 		},
 		[makeApiRequestJson, settings.redirectUri],
 	);
@@ -59,12 +52,7 @@ export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 		if (response === null) return;
 
-		setSession({
-			user: response.user,
-			steamConnections: response.steamConnections,
-			expiresAt: new Date(Date.now() + response.expiresIn * 1000).toISOString(),
-			token: response.token,
-		});
+		setSession(response);
 	}, [session, makeApiRequestJson]);
 
 	const requestLogout = useCallback(async () => {
