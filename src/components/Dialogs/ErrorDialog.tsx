@@ -1,7 +1,8 @@
-import { type FC, useState } from "react";
+import { type FC, Fragment, useMemo, useState } from "react";
 import { DialogBase } from "./DialogBase";
 import "./ErrorDialog.css";
 import type { ErrorData } from "@/contexts/Global/GlobalTypes";
+import { CopyTextButton } from "../Buttons/CopyTextButton";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 
 interface ErrorDialogProps {
@@ -17,9 +18,46 @@ export const ErrorDialog: FC<ErrorDialogProps> = ({ errorData, onClose }) => {
 
 	const [isShowingExtra, setIsShowingExtra] = useState(false);
 
+	const asHtml = useMemo(() => {
+		if (!description.startsWith("<!DOCTYPE html>")) return null;
+
+		const parser = new DOMParser();
+
+		const virtualDoc = parser.parseFromString(description, "text/html");
+
+		const codeElements = virtualDoc.getElementsByTagName("pre");
+
+		const textAreaElement = document.createElement("textarea");
+
+		if (codeElements.length === 0) {
+			textAreaElement.innerHTML = virtualDoc.body.innerHTML;
+		} else {
+			textAreaElement.innerHTML = Array.from(codeElements)
+				.map((e) => e.innerHTML)
+				.join("<br><br>");
+		}
+
+		return textAreaElement.value.split("<br>");
+	}, [description]);
+
 	return (
 		<DialogBase title={title} onClose={onClose}>
-			<p>{description}</p>
+			{asHtml !== null ? (
+				<div className="error-dialog-html-display">
+					<pre>
+						{asHtml.map((x, i) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: nothing else to index
+							<Fragment key={i}>
+								{x}
+								<br />
+							</Fragment>
+						))}
+					</pre>
+					<CopyTextButton text={asHtml.join("\n")} />
+				</div>
+			) : (
+				<p>{description}</p>
+			)}
 
 			{Object.keys(rest).length > 0 && (
 				<details

@@ -1,3 +1,14 @@
 .error-dialog-status-text {
     color: var(--text-secondary);
 }
+
+.error-dialog-html-display {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    > pre {
+        background-color: var(--bg-disabled);
+        padding: 0.5em 1em;
+    }
+}
