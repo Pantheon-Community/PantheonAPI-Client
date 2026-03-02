@@ -87,7 +87,7 @@ export const CurrentUserProvider: FC<{ children: ReactNode }> = ({ children }) =
 		if (isDoingSomething.current) return;
 		isDoingSomething.current = true;
 
-		const response = await makeJsonRequest<AuthResponse>("/logout", {
+		const response = await makeJsonRequest<AuthResponse>("/refresh", {
 			method: "post",
 			headers: {
 				authorization: `Bearer ${currentUser.token}`,
