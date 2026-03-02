@@ -1,14 +1,16 @@
-import { type FC, useContext, useEffect, useRef, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { LoginButton } from "@/components/Buttons/LoginButton";
-import { SessionContext } from "@/contexts/Session";
-import { SettingsContext } from "@/contexts/Settings";
 import "./LoginPage.css";
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { InternalLink } from "@/components/Links/InternalLink";
+import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 
 enum LoginState {
 	Init,
+
+	Fetching,
 
 	NoCode,
 
@@ -20,8 +22,8 @@ enum LoginState {
 }
 
 export const LoginPage: FC = () => {
-	const { sessionData } = useContext(SettingsContext);
-	const { session, requestLogin } = useContext(SessionContext);
+	const { state } = useBrowserSession();
+	const { currentUser, login } = useCurrentUser();
 
 	const [searchParams] = useSearchParams();
 
@@ -29,20 +31,15 @@ export const LoginPage: FC = () => {
 
 	const [loginState, setLoginState] = useState(LoginState.Init);
 
-	const isRequesting = useRef(false);
-
 	useEffect(() => {
 		if (loginState !== LoginState.Init) return;
 
-		if (session !== null) {
+		if (currentUser !== null) {
 			setLoginState(LoginState.AlreadyLoggedIn);
 			return;
 		}
 
 		// avoid double request in strict mode
-		if (isRequesting.current) return;
-		isRequesting.current = true;
-
 		const code = searchParams.get("code");
 
 		if (code === null) {
@@ -50,37 +47,40 @@ export const LoginPage: FC = () => {
 			return;
 		}
 
-		const state = searchParams.get("state");
+		const receivedState = searchParams.get("state");
 
-		if (state === null || state !== sessionData.state) {
+		if (receivedState === null || receivedState !== state) {
 			setLoginState(LoginState.CrossSiteRequestForgery);
 			return;
 		}
 
 		const controller = new AbortController();
 
-		requestLogin(code).then(async () => {
-			setLoginState(LoginState.Redirecting);
+		setLoginState(LoginState.Fetching);
 
+		login(code).then(async () => {
+			setLoginState(LoginState.Redirecting);
 			await navigate("/");
 		});
 
-		return () => {
-			controller.abort();
-		};
-	}, [searchParams, loginState, navigate, requestLogin, sessionData.state, session]);
+		return () => controller.abort();
+	}, [currentUser, login, loginState, navigate, searchParams, state]);
 
 	return (
 		<section className="login-page">
 			<h1>Log In</h1>
 
-			{session !== null && (
+			{currentUser !== null && (
 				<>
 					<p>
-						You're already logged in as <b>{session.user.username}</b>, silly!
+						You're already logged in as <b>{currentUser.user.username}</b>, silly!
 					</p>
 
-					<InternalLink href="/profile">Go to your profile</InternalLink>
+					<InternalLink href="/profile">
+						<button type="button" className="go-to-profile-button">
+							View Profile
+						</button>
+					</InternalLink>
 
 					<LogoutButton />
 				</>
@@ -104,11 +104,11 @@ export const LoginPage: FC = () => {
 				</>
 			)}
 
-			{(loginState === LoginState.Init || loginState === LoginState.Redirecting) && (
-				<p>Logging you in...</p>
-			)}
+			{(loginState === LoginState.Init ||
+				loginState === LoginState.Fetching ||
+				loginState === LoginState.Redirecting) && <p>Logging you in...</p>}
 
-			{session === null && loginState === LoginState.AlreadyLoggedIn && (
+			{currentUser === null && loginState === LoginState.AlreadyLoggedIn && (
 				<>
 					<p>Well, you got what you wanted.</p>
 

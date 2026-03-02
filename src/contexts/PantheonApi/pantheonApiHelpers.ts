@@ -1,5 +1,5 @@
-import type { ErrorData } from "@/contexts/Global/GlobalTypes";
 import type { SiteErrorObject } from "@/shared/types/SiteErrorObject";
+import type { ApiResponseData } from "./ApiErrorData";
 
 interface MaybeError {
 	title?: unknown;
@@ -70,7 +70,7 @@ export function parseError(error: unknown): SiteErrorObject {
 	throw error;
 }
 
-export function parseStatus(response: Response | undefined): ErrorData["status"] {
+export function parseStatus(response: Response | undefined): ApiResponseData | null {
 	if (response === undefined) {
 		return null;
 	}

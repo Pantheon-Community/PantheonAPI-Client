@@ -1,12 +1,12 @@
 import { type FC, Fragment, useMemo, useState } from "react";
 import { DialogBase } from "./DialogBase";
 import "./ErrorDialog.css";
-import type { ErrorData } from "@/contexts/Global/GlobalTypes";
+import type { ApiErrorData } from "@/contexts/PantheonApi/ApiErrorData";
 import { CopyTextButton } from "../Buttons/CopyTextButton";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 
 interface ErrorDialogProps {
-	errorData: ErrorData;
+	errorData: ApiErrorData;
 
 	onClose: () => void;
 }

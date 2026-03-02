@@ -17,9 +17,7 @@ export const RateLimitedDialog: FC<RateLimitedDialogProps> = ({ endsAt, onClose 
 	useEffect(() => {
 		const interval = setInterval(() => setExpiresIn(calculateExpiresIn(endsAt)), 1000);
 
-		return () => {
-			clearInterval(interval);
-		};
+		return () => clearInterval(interval);
 	}, [endsAt]);
 
 	return (

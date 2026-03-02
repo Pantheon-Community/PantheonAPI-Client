@@ -1,4 +1,5 @@
 import {
+	createContext,
 	type FC,
 	type ReactNode,
 	useCallback,
@@ -9,19 +10,27 @@ import {
 } from "react";
 import { ErrorDialog } from "@/components/Dialogs/ErrorDialog";
 import { RateLimitedDialog } from "@/components/Dialogs/RateLimitedDialog";
-import { GlobalContext } from "@/contexts/Global";
-import type { ErrorData } from "@/contexts/Global/GlobalTypes";
-import { SettingsContext } from "@/contexts/Settings";
-import { isAbortError, isRateLimitError, parseError, parseStatus } from "./globalHelpers";
+import { useSettings } from "../Settings/SettingsContext";
+import { notImplementedFunctionAsync } from "../utils";
+import type { ApiErrorData } from "./ApiErrorData";
+import type { PantheonApi } from "./PantheonApi";
+import { isAbortError, isRateLimitError, parseError, parseStatus } from "./pantheonApiHelpers";
 
-export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
-	const { settings } = useContext(SettingsContext);
+const PantheonApiContext = createContext<PantheonApi>({
+	isRateLimited: false,
+	makeRequest: notImplementedFunctionAsync,
+	makeJsonRequest: notImplementedFunctionAsync,
+	makeTextRequest: notImplementedFunctionAsync,
+});
+
+export const PantheonApiProvider: FC<{ children: ReactNode }> = ({ children }) => {
+	const { serverUrl } = useSettings();
 
 	const [rateLimitEndsAt, setRateLimitEndsAt] = useState<number | null>(null);
 
-	const [latestError, setLatestError] = useState<ErrorData | null>(null);
+	const [latestError, setLatestError] = useState<ApiErrorData | null>(null);
 
-	const canMakeApiRequests = useMemo(() => rateLimitEndsAt === null, [rateLimitEndsAt]);
+	const isRateLimited = useMemo(() => rateLimitEndsAt === null, [rateLimitEndsAt]);
 
 	useEffect(() => {
 		if (rateLimitEndsAt === null) return;
@@ -35,9 +44,7 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 		const timeout = setTimeout(setRateLimitEndsAt, msTillEnd, null);
 
-		return () => {
-			clearTimeout(timeout);
-		};
+		return () => clearTimeout(timeout);
 	}, [rateLimitEndsAt]);
 
 	const makeRequestInternal = useCallback(
@@ -49,11 +56,9 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			let response: Response | undefined;
 
 			try {
-				response = await fetch(`${settings.serverUrl}${path}`, init);
+				response = await fetch(`${serverUrl}${path}`, init);
 
-				if (response.ok) {
-					return response;
-				}
+				if (response.ok) return response;
 
 				const contentType = response.headers.get("content-type")?.toLowerCase();
 
@@ -83,10 +88,10 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 				return null;
 			}
 		},
-		[rateLimitEndsAt, settings.serverUrl],
+		[rateLimitEndsAt, serverUrl],
 	);
 
-	const makeApiRequest = useCallback(
+	const makeRequest = useCallback(
 		async (path: string, init?: RequestInit): Promise<boolean> => {
 			const result = await makeRequestInternal(path, init);
 			return result !== null;
@@ -94,44 +99,24 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		[makeRequestInternal],
 	);
 
-	const makeApiRequestJson = useCallback(
+	const makeJsonRequest = useCallback(
 		async <T,>(path: string, init?: RequestInit): Promise<T | null> => {
 			const result = await makeRequestInternal(path, init);
 
-			if (result !== null) {
-				try {
-					return await result.json();
-				} catch (error) {
-					if (!isAbortError(error)) {
-						setLatestError({ error: parseError(error), status: parseStatus(result) });
-					}
+			if (result === null) return null;
 
-					return null;
-				}
-			}
-
-			return null;
+			return await result.json();
 		},
 		[makeRequestInternal],
 	);
 
-	const makeApiRequestText = useCallback(
+	const makeTextRequest = useCallback(
 		async (path: string, init?: RequestInit): Promise<string | null> => {
 			const result = await makeRequestInternal(path, init);
 
-			if (result !== null) {
-				try {
-					return await result.text();
-				} catch (error) {
-					if (!isAbortError(error)) {
-						setLatestError({ error: parseError(error), status: parseStatus(result) });
-					}
+			if (result === null) return null;
 
-					return null;
-				}
-			}
-
-			return null;
+			return await result.text();
 		},
 		[makeRequestInternal],
 	);
@@ -141,8 +126,8 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const handleRateLimitedClose = useCallback(() => setRateLimitEndsAt(null), []);
 
 	return (
-		<GlobalContext.Provider
-			value={{ canMakeApiRequests, makeApiRequest, makeApiRequestJson, makeApiRequestText }}
+		<PantheonApiContext.Provider
+			value={{ isRateLimited, makeRequest, makeJsonRequest, makeTextRequest }}
 		>
 			{latestError !== null && (
 				<ErrorDialog errorData={latestError} onClose={handleErrorClose} />
@@ -153,6 +138,8 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			)}
 
 			{children}
-		</GlobalContext.Provider>
+		</PantheonApiContext.Provider>
 	);
 };
+
+export const usePantheonApi = () => useContext(PantheonApiContext);

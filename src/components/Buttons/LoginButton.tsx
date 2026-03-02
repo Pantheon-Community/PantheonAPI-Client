@@ -1,22 +1,21 @@
-import { useContext } from "react";
-import { SettingsContext } from "@/contexts/Settings";
 import { ExternalLink } from "../Links/ExternalLink";
 import "./LoginButton.css";
-import { SessionContext } from "@/contexts/Session";
+import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import DiscordSymbolWhite from "../../images/Discord-Symbol-White.svg";
 
 export const LoginButton = () => {
-	const { sessionData } = useContext(SettingsContext);
-	const { session } = useContext(SessionContext);
+	const { oAuthLink } = useBrowserSession();
+	const { currentUser } = useCurrentUser();
 
 	return (
 		<ExternalLink
 			className="login-button"
-			href={sessionData.oAuthLink}
+			href={oAuthLink}
 			title="Login with Discord"
 			target="_self"
 		>
-			<button type="button" disabled={session !== null}>
+			<button type="button" disabled={currentUser !== null}>
 				<img src={DiscordSymbolWhite} alt="Discord logo" />
 
 				<span>Login</span>

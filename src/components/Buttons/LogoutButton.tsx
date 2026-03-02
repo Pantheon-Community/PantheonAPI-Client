@@ -1,23 +1,23 @@
-import { useCallback, useContext, useState } from "react";
-import { SessionContext } from "@/contexts/Session";
+import { useCallback, useState } from "react";
 import "./LogoutButton.css";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 
 export const LogoutButton = () => {
-	const { session, requestLogout } = useContext(SessionContext);
+	const { currentUser, logout } = useCurrentUser();
 
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const handleClick = useCallback(async () => {
 		setIsLoggingOut(true);
-		await requestLogout();
+		await logout();
 		setIsLoggingOut(false);
-	}, [requestLogout]);
+	}, [logout]);
 
 	return (
 		<button
 			className="logout-button"
 			type="button"
-			disabled={session === null || isLoggingOut}
+			disabled={currentUser === null || isLoggingOut}
 			onClick={handleClick}
 		>
 			Logout

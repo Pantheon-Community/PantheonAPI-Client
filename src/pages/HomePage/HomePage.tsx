@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { LoginButton } from "@/components/Buttons/LoginButton";
-import { SessionContext } from "@/contexts/Session";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 
 export const HomePage = () => {
-	const { session } = useContext(SessionContext);
+	const { currentUser } = useCurrentUser();
 
 	return (
 		<section className="home-page">
@@ -13,7 +12,7 @@ export const HomePage = () => {
 
 			<p>There's not much here yet, but will be soon™</p>
 
-			{session === null && <LoginButton />}
+			{currentUser === null && <LoginButton />}
 		</section>
 	);
 };

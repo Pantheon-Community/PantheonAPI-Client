@@ -1,11 +1,10 @@
-import { useContext } from "react";
 import { InternalLink } from "../Links/InternalLink";
 import "./Sidebar.css";
-import { SessionContext } from "@/contexts/Session";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 
 export const Sidebar = () => {
-	const { session } = useContext(SessionContext);
+	const { currentUser } = useCurrentUser();
 
 	return (
 		<div className="sidebar">
@@ -14,15 +13,15 @@ export const Sidebar = () => {
 			<nav>
 				<InternalLink href="/">Home</InternalLink>
 
-				{session !== null && (
+				{currentUser !== null && (
 					<InternalLink href="/profile">
 						<span className="inline-profile">
 							<span>Profile</span>
 
 							<ProfilePicture
-								id={session.user.id}
-								username={session.user.username}
-								avatar={session.user.avatar}
+								id={currentUser.user.id}
+								username={currentUser.user.username}
+								avatar={currentUser.user.avatar}
 								size={32}
 							/>
 						</span>

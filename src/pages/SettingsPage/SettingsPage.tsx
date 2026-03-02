@@ -1,44 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { SettingsContext } from "@/contexts/Settings";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
 import "./SettingsPage.css";
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
-import { GlobalContext } from "@/contexts/Global";
-
-enum ServerStatus {
-	Untested,
-	Checking,
-	Bad,
-	Ok,
-}
+import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import { useSettingsFull } from "@/contexts/Settings/SettingsContext";
 
 export const SettingsPage = () => {
-	const { settings, sessionData, setValue, resetValue } = useContext(SettingsContext);
-
-	const { makeApiRequest } = useContext(GlobalContext);
-
-	const [serverStatus, setServerStatus] = useState(ServerStatus.Untested);
-
-	const [controller, setController] = useState<AbortController>();
-
-	const handleTestServer = useCallback(async () => {
-		setServerStatus(ServerStatus.Checking);
-
-		const localController = new AbortController();
-		setController(localController);
-
-		const result = await makeApiRequest("/", { signal: localController.signal });
-
-		setServerStatus(result ? ServerStatus.Ok : ServerStatus.Bad);
-	}, [makeApiRequest]);
-
-	useEffect(() => {
-		if (controller === undefined) return;
-
-		return () => {
-			controller.abort();
-		};
-	}, [controller]);
+	const { settings, setValue, resetValue } = useSettingsFull();
+	const { state, oAuthLink } = useBrowserSession();
 
 	return (
 		<section className="settings-page">
@@ -52,10 +20,7 @@ export const SettingsPage = () => {
 						<input
 							type="text"
 							value={settings.serverUrl}
-							onChange={(e) => {
-								setValue("serverUrl", e.target.value);
-								setServerStatus(ServerStatus.Untested);
-							}}
+							onChange={(e) => setValue("serverUrl", e.target.value)}
 						/>
 					</label>
 
@@ -67,18 +32,6 @@ export const SettingsPage = () => {
 						>
 							Reset
 						</button>
-
-						<button
-							type="submit"
-							disabled={serverStatus === ServerStatus.Checking}
-							onClick={handleTestServer}
-						>
-							Test
-						</button>
-
-						<p className={`status ${ServerStatus[serverStatus]}`}>
-							{ServerStatus[serverStatus]}
-						</p>
 					</div>
 
 					<p>Endpoint to the Pantheon Community API.</p>
@@ -216,13 +169,13 @@ export const SettingsPage = () => {
 				<p>
 					<span>OAuth Link</span>
 
-					<CopyTextButton text={sessionData.oAuthLink} />
+					<CopyTextButton text={oAuthLink} />
 				</p>
 
-				<pre>{sessionData.oAuthLink}</pre>
+				<pre>{oAuthLink}</pre>
 
 				<p>State</p>
-				<pre>{sessionData.state}</pre>
+				<pre>{state}</pre>
 			</div>
 		</section>
 	);

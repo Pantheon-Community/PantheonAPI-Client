@@ -18,9 +18,7 @@ export const CopyTextButton: FC<CopyTextButtonProps> = ({ text }) => {
 
 		const timeout = setTimeout(setClickedTimes, 800, 0);
 
-		return () => {
-			clearTimeout(timeout);
-		};
+		return () => clearTimeout(timeout);
 	}, [clickedTimes]);
 
 	return (

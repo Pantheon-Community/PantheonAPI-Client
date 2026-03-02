@@ -1,5 +1,4 @@
-import { notImplementedFunction } from "../notImplementedFunction";
-import type { Settings, SettingsContextType } from "./SettingsTypes";
+import type { Settings } from "./Settings";
 
 function defaultServerUrl() {
 	if (window.location.hostname === "localhost") {
@@ -19,11 +18,4 @@ export const defaultSettings: Settings = {
 	redirectUri: `${window.origin}/login`,
 	maxRefreshMinutes: 3 * 24 * 60, // 3 days
 	minRefreshSeconds: 30,
-};
-
-export const defaultSettingsContext: SettingsContextType = {
-	settings: defaultSettings,
-	setValue: notImplementedFunction,
-	resetValue: notImplementedFunction,
-	sessionData: { state: "", oAuthLink: "" },
 };

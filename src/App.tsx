@@ -3,18 +3,18 @@ import { Sidebar } from "./components/Sidebar/Sidebar";
 import { HomePage } from "./pages/HomePage/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage/NotFoundPage";
 import { SettingsPage } from "./pages/SettingsPage/SettingsPage";
-import { Providers } from "./providers/Providers";
 import "./index.css";
 import hljs from "highlight.js/lib/common";
 import jsonLanguage from "highlight.js/lib/languages/json";
 import "highlight.js/styles/atom-one-dark.css";
+import { AllProviders } from "./contexts/AllProviders";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
 
 hljs.registerLanguage("json", jsonLanguage);
 
 export const App = () => (
-	<Providers>
+	<AllProviders>
 		<Sidebar />
 
 		<main>
@@ -26,5 +26,5 @@ export const App = () => (
 				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
 		</main>
-	</Providers>
+	</AllProviders>
 );
