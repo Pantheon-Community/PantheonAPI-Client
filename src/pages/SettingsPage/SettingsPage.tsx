@@ -3,6 +3,7 @@ import "./SettingsPage.css";
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
 import { useSettingsFull } from "@/contexts/Settings/SettingsContext";
+import { duration } from "@/utils/relativeTime";
 
 export const SettingsPage = () => {
 	const { settings, setValue, resetValue } = useSettingsFull();
@@ -122,8 +123,8 @@ export const SettingsPage = () => {
 						<br />
 						Setting to 0 will disable background refreshes entirely.
 						<br />
-						Currently: <b>{(settings.maxRefreshMinutes / 60).toLocaleString()}</b>{" "}
-						hours.
+						Currently{" "}
+						<b>{duration(Date.now() + settings.maxRefreshMinutes * 60 * 1000)}</b>.
 					</p>
 				</div>
 
@@ -159,6 +160,8 @@ export const SettingsPage = () => {
 					<p>
 						If your current session expires in this many seconds or less, a refresh will
 						never be attempted.
+						<br />
+						Currently <b>{duration(Date.now() + settings.minRefreshSeconds * 1000)}</b>.
 					</p>
 				</div>
 			</div>

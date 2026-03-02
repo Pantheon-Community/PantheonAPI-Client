@@ -1,5 +1,3 @@
-import dayjs, { extend } from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import {
 	createContext,
 	type FC,
@@ -12,12 +10,11 @@ import {
 } from "react";
 import type { AuthResponse } from "@/shared/types/AuthResponse";
 import type { LoginRequest } from "@/shared/types/LoginRequest";
+import { duration } from "@/utils/relativeTime";
 import { usePantheonApi } from "../PantheonApi/PantheonApiContext";
 import { useSettings } from "../Settings/SettingsContext";
 import { notImplementedFunctionAsync } from "../utils";
 import { getStoredCurrentUser, saveStoredCurrentUser } from "./currentUserHelpers";
-
-extend(relativeTime);
 
 interface CurrentUserContextType {
 	readonly currentUser: AuthResponse | null;
@@ -108,21 +105,21 @@ export const CurrentUserProvider: FC<{ children: ReactNode }> = ({ children }) =
 	useEffect(() => {
 		if (currentUser === null) return;
 
-		const expirationTime = dayjs(currentUser.expiresAt).fromNow();
+		const expirationTime = duration(new Date(currentUser.expiresAt).getTime());
 
 		const secondsTillExpiry = Math.floor(
 			(new Date(currentUser.expiresAt).getTime() - Date.now()) / 1000,
 		);
 
 		if (secondsTillExpiry < minRefreshSeconds) {
-			console.log(`[SessionProvider] Session expired ${expirationTime}, logging out`);
+			console.log(`[SessionProvider] Session expired ${expirationTime} ago, logging out`);
 			setCurrentUser(null);
 			return;
 		}
 
 		if (secondsTillExpiry < minRefreshSeconds) {
 			console.log(
-				`[SessionProvider] Session expires too soon to refresh (${expirationTime}, logging out`,
+				`[SessionProvider] Session expires too soon to refresh (${expirationTime} ago), logging out`,
 			);
 			setCurrentUser(null);
 			return;
@@ -132,7 +129,7 @@ export const CurrentUserProvider: FC<{ children: ReactNode }> = ({ children }) =
 
 		if (minutesTillExpiry <= maxRefreshMinutes) {
 			console.log(
-				`[SessionProvider] Session expires ${expirationTime}, attempting background refresh`,
+				`[SessionProvider] Session expires in ${expirationTime}, attempting background refresh`,
 			);
 
 			refresh().catch(console.error);
@@ -141,13 +138,13 @@ export const CurrentUserProvider: FC<{ children: ReactNode }> = ({ children }) =
 
 		const delay = 1000 * 60 * (minutesTillExpiry - maxRefreshMinutes);
 
-		const scheduledAt = dayjs(new Date(Date.now() + delay)).fromNow();
+		const scheduledAt = duration(Date.now() + delay);
 
 		const timeout = setTimeout(refresh, delay);
 
 		if (Date.now() >= lastLoggedAt.current) {
 			console.log(
-				`[SessionProvider] Session expires ${expirationTime}, background refreshed scheduled ${scheduledAt}`,
+				`[SessionProvider] Session expires in ${expirationTime}, background refreshed scheduled in ${scheduledAt}`,
 			);
 
 			lastLoggedAt.current = Date.now() + 1000 * 60 * 5;
