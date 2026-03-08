@@ -1,7 +1,7 @@
-import type { AnchorHTMLAttributes, FC } from "react";
+interface ExternalLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "rel"> {
+    title: string;
+}
 
-type ExternalLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "rel">;
-
-export const ExternalLink: FC<ExternalLinkProps> = (props) => (
-	<a rel="noopener noreferrer" {...props} />
+export const ExternalLink: React.FC<ExternalLinkProps> = ({ title, ...props }) => (
+    <a rel="noopener noreferrer" title={title} {...props} />
 );

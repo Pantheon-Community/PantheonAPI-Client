@@ -1,47 +1,48 @@
-import { useState } from "react";
 import { LoginButton } from "@/components/Buttons/LoginButton";
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { RefreshButton } from "@/components/Buttons/RefreshButton";
-import "./ProfilePage.css";
 import { CodeBlock } from "@/components/CodeBlock/CodeBlock";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import { useCallback, useState } from "react";
+import "./ProfilePage.css";
 
-export const ProfilePage = () => {
-	const { currentUser } = useCurrentUser();
+export const ProfilePage: React.FC = () => {
+    const { currentUser } = useCurrentUser();
 
-	const [isShowingExtra, setIsShowingExtra] = useState(false);
+    const [isShowingExtra, setIsShowingExtra] = useState(false);
 
-	if (currentUser === null)
-		return (
-			<section>
-				<h1>Not Logged In</h1>
+    const handleToggle = useCallback((e: React.ToggleEvent<HTMLDetailsElement>) => {
+        setIsShowingExtra(e.newState === "open");
+    }, []);
 
-				<p>You need to be logged in to view your profile.</p>
+    if (currentUser === null)
+        return (
+            <section>
+                <h1>Not Logged In</h1>
 
-				<LoginButton />
-			</section>
-		);
+                <p>You need to be logged in to view your profile.</p>
 
-	return (
-		<section className="profile-page">
-			<h1>{currentUser.user.username}</h1>
+                <LoginButton />
+            </section>
+        );
 
-			<p>What a beautiful profile.</p>
+    return (
+        <section className="profile-page">
+            <h1>{currentUser.user.username}</h1>
 
-			<div className="profile-buttons">
-				<LogoutButton />
+            <p>What a beautiful profile.</p>
 
-				<RefreshButton />
-			</div>
+            <div className="profile-buttons">
+                <LogoutButton />
 
-			<details
-				open={isShowingExtra}
-				onToggle={(e) => setIsShowingExtra(e.newState === "open")}
-			>
-				<summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
+                <RefreshButton />
+            </div>
 
-				<CodeBlock>{currentUser}</CodeBlock>
-			</details>
-		</section>
-	);
+            <details open={isShowingExtra} onToggle={handleToggle}>
+                <summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
+
+                <CodeBlock>{currentUser}</CodeBlock>
+            </details>
+        </section>
+    );
 };

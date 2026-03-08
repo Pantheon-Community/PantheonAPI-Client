@@ -1,163 +1,195 @@
-import {
-	createContext,
-	type FC,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import type { AuthResponse } from "@/shared/types/AuthResponse";
-import type { LoginRequest } from "@/shared/types/LoginRequest";
+import type { LoginRequest } from "@/shared/types/Requests/LoginRequest";
+import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
 import { duration } from "@/utils/relativeTime";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { useLocation } from "react-router";
 import { usePantheonApi } from "../PantheonApi/PantheonApiContext";
 import { useSettings } from "../Settings/SettingsContext";
 import { notImplementedFunctionAsync } from "../utils";
 import { getStoredCurrentUser, saveStoredCurrentUser } from "./currentUserHelpers";
 
 interface CurrentUserContextType {
-	readonly currentUser: AuthResponse | null;
+    readonly currentUser: AuthResponse | null;
 
-	login(code: string): Promise<void>;
+    login(code: string): Promise<void>;
 
-	logout(): Promise<void>;
+    logout(): Promise<void>;
 
-	refresh(): Promise<void>;
+    refresh(): Promise<void>;
 }
 
 const CurrentUserContext = createContext<CurrentUserContextType>({
-	currentUser: null,
-	login: notImplementedFunctionAsync,
-	logout: notImplementedFunctionAsync,
-	refresh: notImplementedFunctionAsync,
+    currentUser: null,
+    login: notImplementedFunctionAsync,
+    logout: notImplementedFunctionAsync,
+    refresh: notImplementedFunctionAsync,
 });
 
-export const CurrentUserProvider: FC<{ children: ReactNode }> = ({ children }) => {
-	const { redirectUri, minRefreshSeconds, maxRefreshMinutes } = useSettings();
-	const { makeRequest, makeJsonRequest } = usePantheonApi();
+export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { redirectUri, minRefreshSeconds, maxRefreshMinutes } = useSettings();
+    const { isRateLimited, makeRequest, makeJsonRequest } = usePantheonApi();
 
-	const [currentUser, setCurrentUser] = useState(getStoredCurrentUser);
+    const [currentUser, setCurrentUser] = useState(getStoredCurrentUser);
 
-	useEffect(() => saveStoredCurrentUser(currentUser), [currentUser]);
+    useEffect(() => saveStoredCurrentUser(currentUser), [currentUser]);
 
-	const isDoingSomething = useRef(false);
+    const isDoingSomething = useRef(false);
 
-	const lastLoggedAt = useRef(0);
+    const lastLoggedAt = useRef(0);
 
-	const login = useCallback(
-		async (code: string) => {
-			if (isDoingSomething.current) return;
-			isDoingSomething.current = true;
+    const { pathname } = useLocation();
 
-			const response = await makeJsonRequest<AuthResponse>("/login", {
-				method: "post",
-				body: JSON.stringify({ code, redirectUri } satisfies LoginRequest),
-				headers: { accept: "application/json", "content-type": "application/json" },
-			});
+    const isInSettings = useMemo(() => pathname === "/settings", [pathname]);
 
-			isDoingSomething.current = false;
+    const login = useCallback(
+        async (code: string) => {
+            if (isDoingSomething.current) return;
+            isDoingSomething.current = true;
 
-			if (response !== null) {
-				setCurrentUser(response);
-			}
-		},
-		[makeJsonRequest, redirectUri],
-	);
+            const response = await makeJsonRequest<AuthResponse>(
+                "/login",
+                {
+                    method: "post",
+                    body: JSON.stringify({ code, redirectUri } satisfies LoginRequest),
+                    headers: { accept: "application/json", "content-type": "application/json" },
+                },
+                { isAuthRelated: true },
+            );
 
-	const logout = useCallback(async () => {
-		if (currentUser?.token === undefined) return;
+            isDoingSomething.current = false;
 
-		if (isDoingSomething.current) return;
-		isDoingSomething.current = true;
+            if (response !== null) {
+                setCurrentUser(response);
+            }
+        },
+        [makeJsonRequest, redirectUri],
+    );
 
-		await makeRequest("/logout", {
-			method: "post",
-			headers: { authorization: `Bearer ${currentUser.token}` },
-		});
+    const logout = useCallback(async () => {
+        if (currentUser?.token === undefined) return;
 
-		isDoingSomething.current = false;
+        if (isDoingSomething.current) return;
+        isDoingSomething.current = true;
 
-		setCurrentUser(null);
-	}, [currentUser?.token, makeRequest]);
+        await makeRequest(
+            "/logout",
+            {
+                method: "post",
+                headers: { authorization: `Bearer ${currentUser.token}` },
+            },
+            { isAuthRelated: true },
+        );
 
-	const refresh = useCallback(async () => {
-		if (currentUser?.token === undefined) return;
+        isDoingSomething.current = false;
 
-		if (isDoingSomething.current) return;
-		isDoingSomething.current = true;
+        setCurrentUser(null);
+    }, [currentUser?.token, makeRequest]);
 
-		const response = await makeJsonRequest<AuthResponse>("/refresh", {
-			method: "post",
-			headers: {
-				authorization: `Bearer ${currentUser.token}`,
-				accept: "application/json",
-			},
-		});
+    const refresh = useCallback(
+        async (controller?: AbortController) => {
+            if (currentUser?.token === undefined) return;
 
-		isDoingSomething.current = false;
+            if (isDoingSomething.current) return;
+            isDoingSomething.current = true;
 
-		if (response !== null) {
-			setCurrentUser(response);
-		}
-	}, [currentUser?.token, makeJsonRequest]);
+            const response = await makeJsonRequest<AuthResponse>(
+                "/refresh",
+                {
+                    method: "post",
+                    headers: {
+                        authorization: `Bearer ${currentUser.token}`,
+                        accept: "application/json",
+                    },
+                    signal: controller?.signal,
+                },
+                { isAuthRelated: true },
+            );
 
-	useEffect(() => {
-		if (currentUser === null) return;
+            isDoingSomething.current = false;
 
-		const expirationTime = duration(new Date(currentUser.expiresAt).getTime());
+            if (response !== null) {
+                setCurrentUser(response);
+            }
+        },
+        [currentUser?.token, makeJsonRequest],
+    );
 
-		const secondsTillExpiry = Math.floor(
-			(new Date(currentUser.expiresAt).getTime() - Date.now()) / 1000,
-		);
+    useEffect(() => {
+        if (currentUser === null) return;
+        if (isInSettings) return;
+        if (isRateLimited) return;
 
-		if (secondsTillExpiry < minRefreshSeconds) {
-			console.log(`[SessionProvider] Session expired ${expirationTime} ago, logging out`);
-			setCurrentUser(null);
-			return;
-		}
+        const expirationTime = duration(new Date(currentUser.expiresAt).getTime());
 
-		if (secondsTillExpiry < minRefreshSeconds) {
-			console.log(
-				`[SessionProvider] Session expires too soon to refresh (${expirationTime} ago), logging out`,
-			);
-			setCurrentUser(null);
-			return;
-		}
+        const secondsTillExpiry = Math.floor(
+            (new Date(currentUser.expiresAt).getTime() - Date.now()) / 1000,
+        );
 
-		const minutesTillExpiry = Math.floor(secondsTillExpiry / 60);
+        if (secondsTillExpiry < minRefreshSeconds) {
+            console.log(`[SessionProvider] Session expired ${expirationTime} ago, logging out`);
+            setCurrentUser(null);
+            return;
+        }
 
-		if (minutesTillExpiry <= maxRefreshMinutes) {
-			console.log(
-				`[SessionProvider] Session expires in ${expirationTime}, attempting background refresh`,
-			);
+        if (secondsTillExpiry < minRefreshSeconds) {
+            console.log(
+                `[SessionProvider] Session expires too soon to refresh (${expirationTime} ago), logging out`,
+            );
+            setCurrentUser(null);
+            return;
+        }
 
-			refresh().catch(console.error);
-			return;
-		}
+        const controller = new AbortController();
 
-		const delay = 1000 * 60 * (minutesTillExpiry - maxRefreshMinutes);
+        const minutesTillExpiry = Math.floor(secondsTillExpiry / 60);
 
-		const scheduledAt = duration(Date.now() + delay);
+        if (minutesTillExpiry <= maxRefreshMinutes) {
+            console.log(
+                `[SessionProvider] Session expires in ${expirationTime}, attempting background refresh`,
+            );
 
-		const timeout = setTimeout(refresh, delay);
+            void refresh(controller);
+            return () => controller.abort();
+        }
 
-		if (Date.now() >= lastLoggedAt.current) {
-			console.log(
-				`[SessionProvider] Session expires in ${expirationTime}, background refreshed scheduled in ${scheduledAt}`,
-			);
+        const delay = 1000 * 60 * (minutesTillExpiry - maxRefreshMinutes);
 
-			lastLoggedAt.current = Date.now() + 1000 * 60 * 5;
-		}
+        const scheduledAt = duration(Date.now() + delay);
 
-		return () => clearTimeout(timeout);
-	}, [currentUser, maxRefreshMinutes, minRefreshSeconds, refresh]);
+        const timeout = setTimeout(refresh, delay, controller);
 
-	return (
-		<CurrentUserContext.Provider value={{ currentUser, login, logout, refresh }}>
-			{children}
-		</CurrentUserContext.Provider>
-	);
+        if (Date.now() >= lastLoggedAt.current) {
+            console.log(
+                `[SessionProvider] Session expires in ${expirationTime}, background refreshed scheduled in ${scheduledAt}`,
+            );
+
+            lastLoggedAt.current = Date.now() + 1000 * 60 * 5;
+        }
+
+        return () => {
+            clearTimeout(timeout);
+            controller.abort();
+        };
+    }, [currentUser, maxRefreshMinutes, minRefreshSeconds, refresh, isInSettings, isRateLimited]);
+
+    const value = useMemo<CurrentUserContextType>(() => {
+        return {
+            currentUser,
+            login,
+            logout,
+            refresh,
+        };
+    }, [currentUser, logout, login, refresh]);
+
+    return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
 };
 
-export const useCurrentUser = () => useContext(CurrentUserContext);
+export const useCurrentUser = (): CurrentUserContextType => useContext(CurrentUserContext);

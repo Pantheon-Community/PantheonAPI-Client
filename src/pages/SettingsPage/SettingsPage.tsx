@@ -1,185 +1,208 @@
-import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
-import "./SettingsPage.css";
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import type { Settings } from "@/contexts/Settings/Settings";
 import { useSettingsFull } from "@/contexts/Settings/SettingsContext";
+import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
 import { duration } from "@/utils/relativeTime";
+import { useCallback } from "react";
+import "./SettingsPage.css";
 
-export const SettingsPage = () => {
-	const { settings, setValue, resetValue } = useSettingsFull();
-	const { state, oAuthLink } = useBrowserSession();
+type StringKey = { [K in keyof Settings]: Settings[K] extends string ? K : never }[keyof Settings];
 
-	return (
-		<section className="settings-page">
-			<h1>Settings</h1>
+type NumberKey = { [K in keyof Settings]: Settings[K] extends number ? K : never }[keyof Settings];
 
-			<div className="input-container">
-				<form onSubmit={(e) => e.preventDefault()}>
-					<label>
-						<p>Server URL</p>
+export const SettingsPage: React.FC = () => {
+    const { settings, setValue, resetValue } = useSettingsFull();
+    const { state, oAuthLink } = useBrowserSession();
 
-						<input
-							type="text"
-							value={settings.serverUrl}
-							onChange={(e) => setValue("serverUrl", e.target.value)}
-						/>
-					</label>
+    const makeTextChangeHandler = useCallback(
+        <K extends StringKey>(key: K) => {
+            return (e: React.ChangeEvent<HTMLInputElement>) => {
+                setValue(key, e.target.value);
+            };
+        },
+        [setValue],
+    );
 
-					<div className="button-container">
-						<button
-							type="reset"
-							disabled={settings.serverUrl === defaultSettings.serverUrl}
-							onClick={() => resetValue("serverUrl")}
-						>
-							Reset
-						</button>
-					</div>
+    const makeNumberChangeHandler = useCallback(
+        <K extends NumberKey>(key: K) => {
+            return (e: React.ChangeEvent<HTMLInputElement>) => {
+                const asNumber = Number(e.target.value);
 
-					<p>Endpoint to the Pantheon Community API.</p>
-				</form>
+                if (Number.isSafeInteger(asNumber) && asNumber >= 0) {
+                    setValue(key, asNumber);
+                }
+            };
+        },
+        [setValue],
+    );
 
-				<div>
-					<label>
-						<p>Discord Client ID</p>
+    const makeResetHandler = useCallback(
+        <K extends keyof Settings>(key: K) => {
+            return () => resetValue(key);
+        },
+        [resetValue],
+    );
 
-						<input
-							value={settings.discordClientId}
-							onChange={(e) => setValue("discordClientId", e.target.value)}
-						/>
-					</label>
+    return (
+        <section className="settings-page">
+            <h1>Settings</h1>
 
-					<div className="button-container">
-						<button
-							type="reset"
-							disabled={settings.discordClientId === defaultSettings.discordClientId}
-							onClick={() => resetValue("discordClientId")}
-						>
-							Reset
-						</button>
-					</div>
+            <div className="input-container">
+                <div>
+                    <label>
+                        <p>Server URL</p>
 
-					<p>Discord application ID for OAuth flows.</p>
-				</div>
+                        <input
+                            type="text"
+                            value={settings.serverUrl}
+                            onChange={makeTextChangeHandler("serverUrl")}
+                        />
+                    </label>
 
-				<div>
-					<label>
-						<p>Redirect URI</p>
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={settings.serverUrl === defaultSettings.serverUrl}
+                            onClick={makeResetHandler("serverUrl")}
+                        >
+                            Reset
+                        </button>
+                    </div>
 
-						<input
-							value={settings.redirectUri}
-							onChange={(e) => setValue("redirectUri", e.target.value)}
-						/>
-					</label>
+                    <p>Endpoint to the Pantheon Community API.</p>
+                </div>
 
-					<div className="button-container">
-						<button
-							type="reset"
-							disabled={settings.redirectUri === defaultSettings.redirectUri}
-							onClick={() => resetValue("redirectUri")}
-						>
-							Reset
-						</button>
-					</div>
+                <div>
+                    <label>
+                        <p>Discord Client ID</p>
 
-					<p>
-						URI to redirect to after Discord OAuth is completed.
-						<br />
-						This must exactly match a redirect URL of the Discord application.
-					</p>
-				</div>
+                        <input
+                            value={settings.discordClientId}
+                            onChange={makeTextChangeHandler("discordClientId")}
+                        />
+                    </label>
 
-				<div>
-					<label>
-						<p>Upper Refresh Threshold</p>
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={settings.discordClientId === defaultSettings.discordClientId}
+                            onClick={makeResetHandler("discordClientId")}
+                        >
+                            Reset
+                        </button>
+                    </div>
 
-						<input
-							value={settings.maxRefreshMinutes.toString()}
-							onChange={(e) => {
-								const asNumber = Number(e.target.value);
+                    <p>Discord application ID for OAuth flows.</p>
+                </div>
 
-								if (Number.isSafeInteger(asNumber) && asNumber >= 0) {
-									setValue("maxRefreshMinutes", asNumber);
-								}
-							}}
-							inputMode="numeric"
-						/>
-					</label>
+                <div>
+                    <label>
+                        <p>Redirect URI</p>
 
-					<div className="button-container">
-						<button
-							type="reset"
-							disabled={
-								settings.maxRefreshMinutes === defaultSettings.maxRefreshMinutes
-							}
-							onClick={() => resetValue("maxRefreshMinutes")}
-						>
-							Reset
-						</button>
-					</div>
+                        <input
+                            value={settings.redirectUri}
+                            onChange={makeTextChangeHandler("redirectUri")}
+                        />
+                    </label>
 
-					<p>
-						If your current session expires in this many minutes or less, a refresh will
-						be attempted.
-						<br />
-						Setting to 0 will disable background refreshes entirely.
-						<br />
-						Currently{" "}
-						<b>{duration(Date.now() + settings.maxRefreshMinutes * 60 * 1000)}</b>.
-					</p>
-				</div>
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={settings.redirectUri === defaultSettings.redirectUri}
+                            onClick={makeResetHandler("redirectUri")}
+                        >
+                            Reset
+                        </button>
+                    </div>
 
-				<div>
-					<label>
-						<p>Lower Refresh Threshold</p>
+                    <p>
+                        URI to redirect to after Discord OAuth is completed.
+                        <br />
+                        This must exactly match a redirect URL of the Discord application.
+                    </p>
+                </div>
 
-						<input
-							value={settings.minRefreshSeconds.toString()}
-							onChange={(e) => {
-								const asNumber = Number(e.target.value);
+                <div>
+                    <label>
+                        <p>Upper Refresh Threshold</p>
 
-								if (Number.isSafeInteger(asNumber) && asNumber >= 0) {
-									setValue("minRefreshSeconds", asNumber);
-								}
-							}}
-							inputMode="numeric"
-						/>
-					</label>
+                        <input
+                            value={settings.maxRefreshMinutes.toString()}
+                            onChange={makeNumberChangeHandler("maxRefreshMinutes")}
+                            inputMode="numeric"
+                        />
+                    </label>
 
-					<div className="button-container">
-						<button
-							type="reset"
-							disabled={
-								settings.minRefreshSeconds === defaultSettings.minRefreshSeconds
-							}
-							onClick={() => resetValue("minRefreshSeconds")}
-						>
-							Reset
-						</button>
-					</div>
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={
+                                settings.maxRefreshMinutes === defaultSettings.maxRefreshMinutes
+                            }
+                            onClick={makeResetHandler("maxRefreshMinutes")}
+                        >
+                            Reset
+                        </button>
+                    </div>
 
-					<p>
-						If your current session expires in this many seconds or less, a refresh will
-						never be attempted.
-						<br />
-						Currently <b>{duration(Date.now() + settings.minRefreshSeconds * 1000)}</b>.
-					</p>
-				</div>
-			</div>
+                    <p>
+                        If your current session expires in this many minutes or less, a refresh will
+                        be attempted.
+                        <br />
+                        Setting to 0 will disable background refreshes entirely.
+                        <br />
+                        Currently{" "}
+                        <b>{duration(Date.now() + settings.maxRefreshMinutes * 60 * 1000)}</b>.
+                    </p>
+                </div>
 
-			<h3>Advanced Stuff</h3>
+                <div>
+                    <label>
+                        <p>Lower Refresh Threshold</p>
 
-			<div className="extra-container">
-				<p>
-					<span>OAuth Link</span>
+                        <input
+                            value={settings.minRefreshSeconds.toString()}
+                            onChange={makeNumberChangeHandler("minRefreshSeconds")}
+                            inputMode="numeric"
+                        />
+                    </label>
 
-					<CopyTextButton text={oAuthLink} />
-				</p>
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={
+                                settings.minRefreshSeconds === defaultSettings.minRefreshSeconds
+                            }
+                            onClick={makeResetHandler("minRefreshSeconds")}
+                        >
+                            Reset
+                        </button>
+                    </div>
 
-				<pre>{oAuthLink}</pre>
+                    <p>
+                        If your current session expires in this many seconds or less, a refresh will
+                        never be attempted.
+                        <br />
+                        Currently <b>{duration(Date.now() + settings.minRefreshSeconds * 1000)}</b>.
+                    </p>
+                </div>
+            </div>
 
-				<p>State</p>
-				<pre>{state}</pre>
-			</div>
-		</section>
-	);
+            <h3>Advanced Stuff</h3>
+
+            <div className="extra-container">
+                <p>
+                    <span>OAuth Link</span>
+
+                    <CopyTextButton text={oAuthLink} />
+                </p>
+
+                <pre>{oAuthLink}</pre>
+
+                <p>State</p>
+                <pre>{state}</pre>
+            </div>
+        </section>
+    );
 };

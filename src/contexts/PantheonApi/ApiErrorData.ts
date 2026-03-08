@@ -1,13 +1,15 @@
 import type { SiteErrorObject } from "@/shared/types/SiteErrorObject";
 
 export interface ApiResponseData {
-	readonly code: number;
+    readonly code: number;
 
-	readonly text: string;
+    readonly text: string;
 }
 
 export interface ApiErrorData {
-	readonly error: SiteErrorObject;
+    readonly error: SiteErrorObject;
 
-	readonly status: ApiResponseData | null;
+    readonly status: ApiResponseData | null;
+
+    readonly isAuthRelated: boolean;
 }

@@ -1,5 +1,5 @@
 export interface BrowserSession {
-	readonly state: string;
+    readonly state: string;
 
-	readonly oAuthLink: string;
+    readonly oAuthLink: string;
 }

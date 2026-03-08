@@ -15,18 +15,17 @@ const elem = document.body;
 elem.style.backgroundImage = `linear-gradient(-45deg, rgba(0,0,0,0.8)), url(${Background})`;
 
 const app = (
-	<StrictMode>
-		<App />
-	</StrictMode>
+    <StrictMode>
+        <App />
+    </StrictMode>
 );
 
 if (import.meta.hot) {
-	// With hot module reloading, `import.meta.hot.data` is persisted.
-	// biome-ignore lint/suspicious/noAssignInExpressions: Bun generated this and I don't know any better.
-	const root = (import.meta.hot.data.root ??= createRoot(elem));
+    // With hot module reloading, `import.meta.hot.data` is persisted.
+    const root = (import.meta.hot.data.root ??= createRoot(elem));
 
-	root.render(app);
+    root.render(app);
 } else {
-	// The hot module reloading API is not available in production.
-	createRoot(elem).render(app);
+    // The hot module reloading API is not available in production.
+    createRoot(elem).render(app);
 }

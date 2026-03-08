@@ -1,5 +1,5 @@
 function plural(this: string, count: number): string {
-	return `${count.toLocaleString()} ${this}${count === 1 ? "" : "s"}`;
+    return `${count.toLocaleString()} ${this}${count === 1 ? "" : "s"}`;
 }
 
 const toSeconds = plural.bind("second");
@@ -14,103 +14,103 @@ const toYears = plural.bind("year");
 // threholds exist for this exact case, however their parameters are almost completely undocumented
 // and don't seem to work. If you can get it working then feel free to replace this function :)
 export function duration(a: number, b: number = Date.now(), join = " and "): string {
-	let seconds = Math.floor(Math.abs(a - b) / 1000);
+    let seconds = Math.floor(Math.abs(a - b) / 1000);
 
-	// less than a minute
+    // less than a minute
 
-	if (seconds < 60) {
-		return toSeconds(seconds);
-	}
+    if (seconds < 60) {
+        return toSeconds(seconds);
+    }
 
-	// less than an hour
+    // less than an hour
 
-	let minutes = Math.floor(seconds / 60);
+    let minutes = Math.floor(seconds / 60);
 
-	if (minutes < 60) {
-		seconds %= 60;
+    if (minutes < 60) {
+        seconds %= 60;
 
-		const minutesStr = toMinutes(minutes);
+        const minutesStr = toMinutes(minutes);
 
-		if (seconds !== 0) {
-			return `${minutesStr}${join}${toSeconds(seconds)}`;
-		}
+        if (seconds !== 0) {
+            return `${minutesStr}${join}${toSeconds(seconds)}`;
+        }
 
-		return minutesStr;
-	}
+        return minutesStr;
+    }
 
-	// less than a day
+    // less than a day
 
-	let hours = Math.floor(minutes / 60);
+    let hours = Math.floor(minutes / 60);
 
-	if (hours < 24) {
-		minutes %= 60;
+    if (hours < 24) {
+        minutes %= 60;
 
-		const hoursStr = toHours(hours);
+        const hoursStr = toHours(hours);
 
-		if (minutes !== 0) {
-			return `${hoursStr}${join}${toMinutes(minutes)}`;
-		}
+        if (minutes !== 0) {
+            return `${hoursStr}${join}${toMinutes(minutes)}`;
+        }
 
-		return hoursStr;
-	}
+        return hoursStr;
+    }
 
-	// less than a week
+    // less than a week
 
-	let days = Math.floor(hours / 24);
+    let days = Math.floor(hours / 24);
 
-	if (days < 7) {
-		hours %= 24;
+    if (days < 7) {
+        hours %= 24;
 
-		const daysStr = toDays(days);
+        const daysStr = toDays(days);
 
-		if (hours !== 0) {
-			return `${daysStr}${join}${toHours(hours)}`;
-		}
+        if (hours !== 0) {
+            return `${daysStr}${join}${toHours(hours)}`;
+        }
 
-		return daysStr;
-	}
+        return daysStr;
+    }
 
-	// less than a month (approx. 4 weeks)
+    // less than a month (approx. 4 weeks)
 
-	const weeks = Math.floor(days / 7);
+    const weeks = Math.floor(days / 7);
 
-	if (weeks <= 4) {
-		days %= 7;
+    if (weeks <= 4) {
+        days %= 7;
 
-		const weeksStr = toWeeks(weeks);
+        const weeksStr = toWeeks(weeks);
 
-		if (days !== 0) {
-			return `${weeksStr}${join}${toDays(days)}`;
-		}
+        if (days !== 0) {
+            return `${weeksStr}${join}${toDays(days)}`;
+        }
 
-		return weeksStr;
-	}
+        return weeksStr;
+    }
 
-	// less than a year (approx. 30 days);
+    // less than a year (with a month being approx. 30 days)
 
-	let months = Math.floor(days / 30);
+    let months = Math.floor(days / 30);
 
-	if (months < 12) {
-		days %= 30;
+    if (months < 12) {
+        days %= 30;
 
-		const monthsStr = toMonths(months);
+        const monthsStr = toMonths(months);
 
-		if (days !== 0) {
-			return `${monthsStr}${join}${toDays(days)}`;
-		}
+        if (days !== 0) {
+            return `${monthsStr}${join}${toDays(days)}`;
+        }
 
-		return monthsStr;
-	}
+        return monthsStr;
+    }
 
-	// X years
+    // X years
 
-	const yearsStr = toYears(Math.floor(months / 12));
+    const yearsStr = toYears(Math.floor(months / 12));
 
-	months %= 12;
+    months %= 12;
 
-	if (months !== 0) {
-		return `${yearsStr}${join}${toMonths(months)}`;
-	}
+    if (months !== 0) {
+        return `${yearsStr}${join}${toMonths(months)}`;
+    }
 
-	return yearsStr;
+    return yearsStr;
 }

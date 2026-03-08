@@ -1,36 +1,41 @@
 {
-  "compilerOptions": {
-    // Environment setup & latest features
-    "lib": ["ESNext", "DOM"],
-    "target": "ESNext",
-    "module": "Preserve",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
+    // https://www.typescriptlang.org/tsconfig/
+    "compilerOptions": {
+        // Type Checking
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "strict": true,
+        "useUnknownInCatchVariables": true,
 
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
+        // Modules
+        "allowImportingTsExtensions": true,
+        "module": "Preserve",
+        "moduleResolution": "bundler",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@/shared/*": ["./shared/*"]
+        },
 
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
+        // Emit
+        "noEmit": true,
 
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/shared/*": ["./shared/*"]
+        // JavaScript Support
+        "allowJs": true,
+
+        // Interop Constraints
+        "forceConsistentCasingInFileNames": true,
+        "verbatimModuleSyntax": true,
+
+        // Language and Environment
+        "jsx": "react-jsx",
+        "lib": ["ESNext", "DOM"],
+        "moduleDetection": "force",
+        "target": "ESNext",
+
+        // Completeness
+        "skipLibCheck": true
     },
 
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  },
-
-  "exclude": ["dist", "node_modules"]
+    "include": ["src", "shared"]
 }

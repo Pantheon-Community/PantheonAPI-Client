@@ -1,26 +1,31 @@
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { useCallback, useState } from "react";
 import "./LogoutButton.css";
-import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 
-export const LogoutButton = () => {
-	const { currentUser, logout } = useCurrentUser();
+interface LogoutButtonProps {
+    extraOnClick?: () => void;
+}
 
-	const [isLoggingOut, setIsLoggingOut] = useState(false);
+export const LogoutButton: React.FC<LogoutButtonProps> = ({ extraOnClick }) => {
+    const { currentUser, logout } = useCurrentUser();
 
-	const handleClick = useCallback(async () => {
-		setIsLoggingOut(true);
-		await logout();
-		setIsLoggingOut(false);
-	}, [logout]);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-	return (
-		<button
-			className="logout-button"
-			type="button"
-			disabled={currentUser === null || isLoggingOut}
-			onClick={handleClick}
-		>
-			Logout
-		</button>
-	);
+    const handleClick = useCallback(async () => {
+        setIsLoggingOut(true);
+        await logout();
+        setIsLoggingOut(false);
+        extraOnClick?.();
+    }, [logout, extraOnClick]);
+
+    return (
+        <button
+            className="logout-button"
+            type="button"
+            disabled={currentUser === null || isLoggingOut}
+            onClick={handleClick}
+        >
+            Logout
+        </button>
+    );
 };

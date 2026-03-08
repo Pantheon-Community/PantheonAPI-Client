@@ -2,8 +2,16 @@
     display: flex;
     animation: lazy-image-pulse 1s infinite alternate ease-in-out;
 
+    & > img {
+        visibility: hidden;
+    }
+
     &.loaded {
         animation: none;
+
+        & > img {
+            visibility: visible;
+        }
     }
 }
 

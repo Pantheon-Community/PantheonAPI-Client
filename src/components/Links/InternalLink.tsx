@@ -1,9 +1,9 @@
-import type { AnchorHTMLAttributes, FC } from "react";
 import { NavLink } from "react-router";
 
-type InternalLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> &
-	Pick<Required<AnchorHTMLAttributes<HTMLAnchorElement>>, "href">;
+interface InternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+    href: string;
+}
 
-export const InternalLink: FC<InternalLinkProps> = ({ href, ...rest }) => (
-	<NavLink to={href} {...rest} />
+export const InternalLink: React.FC<InternalLinkProps> = ({ href, ...rest }) => (
+    <NavLink to={href} {...rest} />
 );

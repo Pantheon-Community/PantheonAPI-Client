@@ -5,8 +5,8 @@
         "dev": "bun --hot src/index.ts",
         "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
         "start": "NODE_ENV=production bun src/index.ts",
-        "lint": "biome check",
-        "lint-fix": "biome check --write",
+        "lint": "oxlint --config .oxlintrc.json",
+        "lint-fix": "oxlint --config .oxlintrc.json --fix",
         "typecheck": "bun run tsc --project tsconfig.json",
         "check-all": "bun run lint && bun run typecheck"
     },
@@ -17,10 +17,12 @@
         "react-router": "^7.13.1"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.4",
         "@types/bun": "latest",
         "@types/react": "^19",
         "@types/react-dom": "^19",
+        "oxfmt": "^0.36.0",
+        "oxlint": "^1.51.0",
+        "oxlint-tsgolint": "^0.16.0",
         "typescript": "^5.9.3"
     }
 }

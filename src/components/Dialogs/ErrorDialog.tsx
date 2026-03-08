@@ -1,81 +1,105 @@
-import { type FC, Fragment, useMemo, useState } from "react";
+import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import type { ApiErrorData } from "@/contexts/PantheonApi/ApiErrorData";
+import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
+import { Fragment, useCallback, useMemo, useState } from "react";
+import { CopyTextButton } from "../Buttons/CopyTextButton";
+import { LogoutButton } from "../Buttons/LogoutButton";
+import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { DialogBase } from "./DialogBase";
 import "./ErrorDialog.css";
-import type { ApiErrorData } from "@/contexts/PantheonApi/ApiErrorData";
-import { CopyTextButton } from "../Buttons/CopyTextButton";
-import { CodeBlock } from "../CodeBlock/CodeBlock";
 
 interface ErrorDialogProps {
-	errorData: ApiErrorData;
+    errorData: ApiErrorData;
 
-	onClose: () => void;
+    onClose: () => void;
 }
 
-export const ErrorDialog: FC<ErrorDialogProps> = ({ errorData, onClose }) => {
-	const { error, status } = errorData;
+export const ErrorDialog: React.FC<ErrorDialogProps> = ({ errorData, onClose }) => {
+    const { currentUser } = useCurrentUser();
 
-	const { title, description, ...rest } = error;
+    const { error, status, isAuthRelated } = errorData;
 
-	const [isShowingExtra, setIsShowingExtra] = useState(false);
+    const { title, description, ...rest } = error;
 
-	const asHtml = useMemo(() => {
-		if (!description.startsWith("<!DOCTYPE html>")) return null;
+    const [isShowingExtra, setIsShowingExtra] = useState(false);
 
-		const parser = new DOMParser();
+    const asHtml = useMemo(() => {
+        if (!description.startsWith("<!DOCTYPE html>")) return null;
 
-		const virtualDoc = parser.parseFromString(description, "text/html");
+        const parser = new DOMParser();
 
-		const codeElements = virtualDoc.getElementsByTagName("pre");
+        const virtualDoc = parser.parseFromString(description, "text/html");
 
-		const textAreaElement = document.createElement("textarea");
+        const codeElements = virtualDoc.getElementsByTagName("pre");
 
-		if (codeElements.length === 0) {
-			textAreaElement.innerHTML = virtualDoc.body.innerHTML;
-		} else {
-			textAreaElement.innerHTML = Array.from(codeElements)
-				.map((e) => e.innerHTML)
-				.join("<br><br>");
-		}
+        const textAreaElement = document.createElement("textarea");
 
-		return textAreaElement.value.split("<br>");
-	}, [description]);
+        if (codeElements.length === 0) {
+            textAreaElement.innerHTML = virtualDoc.body.innerHTML;
+        } else {
+            textAreaElement.innerHTML = Array.from(codeElements)
+                .map((e) => e.innerHTML)
+                .join("<br><br>");
+        }
 
-	return (
-		<DialogBase title={title} onClose={onClose}>
-			{asHtml !== null ? (
-				<div className="error-dialog-html-display">
-					<pre>
-						{asHtml.map((x, i) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: nothing else to index
-							<Fragment key={i}>
-								{x}
-								<br />
-							</Fragment>
-						))}
-					</pre>
-					<CopyTextButton text={asHtml.join("\n")} />
-				</div>
-			) : (
-				<p>{description}</p>
-			)}
+        return textAreaElement.value.split("<br>");
+    }, [description]);
 
-			{Object.keys(rest).length > 0 && (
-				<details
-					open={isShowingExtra}
-					onToggle={(e) => setIsShowingExtra(e.newState === "open")}
-				>
-					<summary>{isShowingExtra ? "Hide" : "Show"} Additional Details</summary>
+    const handleToggle = useCallback((e: React.ToggleEvent<HTMLDetailsElement>) => {
+        setIsShowingExtra(e.newState === "open");
+    }, []);
 
-					<CodeBlock>{rest}</CodeBlock>
-				</details>
-			)}
+    return (
+        <DialogBase title={title} onClose={onClose}>
+            {asHtml !== null ? (
+                <div className="error-dialog-html-display">
+                    <pre>
+                        {asHtml.map((x, i) => (
+                            // oxlint-disable-next-line react/no-array-index-key
+                            <Fragment key={i}>
+                                {x}
+                                <br />
+                            </Fragment>
+                        ))}
+                    </pre>
+                    <CopyTextButton text={asHtml.join("\n")} />
+                </div>
+            ) : (
+                <p>{description}</p>
+            )}
 
-			{status && (
-				<p className="error-dialog-status-text">
-					HTTP {status.code}
-					{status.text && ` - ${status.text}`}
-				</p>
-			)}
-		</DialogBase>
-	);
+            {Object.keys(rest).length > 0 && (
+                <details open={isShowingExtra} onToggle={handleToggle}>
+                    <summary>{isShowingExtra ? "Hide" : "Show"} Additional Details</summary>
+
+                    <CodeBlock>{rest}</CodeBlock>
+                </details>
+            )}
+
+            {(status || (isAuthRelated && currentUser !== null)) && (
+                <div className="error-dialog-rest">
+                    {status && (
+                        <p className="error-dialog-status-text">
+                            HTTP {status.code}
+                            {status.text && ` - ${status.text}`}
+                        </p>
+                    )}
+
+                    {isAuthRelated && currentUser !== null && (
+                        <LogoutButton extraOnClick={onClose} />
+                    )}
+                </div>
+            )}
+        </DialogBase>
+    );
+};
+
+export const WrappedErrorDialog: React.FC = () => {
+    const { latestError, handleErrorClose } = usePantheonApi();
+
+    if (latestError === null) {
+        return null;
+    }
+
+    return <ErrorDialog errorData={latestError} onClose={handleErrorClose} />;
 };

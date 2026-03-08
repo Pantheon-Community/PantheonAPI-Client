@@ -1,11 +1,11 @@
 export interface Settings {
-	readonly serverUrl: string;
+    readonly serverUrl: string;
 
-	readonly discordClientId: string;
+    readonly discordClientId: string;
 
-	readonly redirectUri: string;
+    readonly redirectUri: string;
 
-	readonly maxRefreshMinutes: number;
+    readonly maxRefreshMinutes: number;
 
-	readonly minRefreshSeconds: number;
+    readonly minRefreshSeconds: number;
 }

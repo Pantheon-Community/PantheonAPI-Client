@@ -1,9 +1,19 @@
+import type { ApiErrorData } from "./ApiErrorData";
+
+export interface ExtraInit {
+    isAuthRelated?: boolean;
+}
+
 export interface PantheonApi {
-	readonly isRateLimited: boolean;
+    readonly isRateLimited: boolean;
 
-	makeRequest(path: string, init?: RequestInit): Promise<boolean>;
+    readonly latestError: ApiErrorData | null;
 
-	makeJsonRequest<T>(path: string, init?: RequestInit): Promise<T | null>;
+    handleErrorClose(): void;
 
-	makeTextRequest(path: string, init?: RequestInit): Promise<string | null>;
+    makeRequest(path: string, init?: RequestInit, extra?: ExtraInit): Promise<boolean>;
+
+    makeJsonRequest<T>(path: string, init?: RequestInit, extra?: ExtraInit): Promise<T | null>;
+
+    makeTextRequest(path: string, init?: RequestInit, extra?: ExtraInit): Promise<string | null>;
 }

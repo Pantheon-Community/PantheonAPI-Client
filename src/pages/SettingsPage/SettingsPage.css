@@ -6,7 +6,7 @@
         column-gap: 0.5rem;
         row-gap: 3rem;
 
-        > div, > form {
+        > div {
             display: grid;
             grid-template-columns: subgrid;
             grid-column: span 3;
@@ -43,7 +43,7 @@
         box-sizing: border-box;
         gap: 1rem;
         overflow: hidden;
-        max-width: 100%;
+        max-width: 650px;
 
         > p {
             display: flex;
