@@ -22,7 +22,7 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const [latestError, setLatestError] = useState<ApiErrorData | null>(null);
 
-    const isRateLimited = useMemo(() => rateLimitEndsAt === null, [rateLimitEndsAt]);
+    const isRateLimited = useMemo(() => rateLimitEndsAt !== null, [rateLimitEndsAt]);
 
     useEffect(() => {
         if (rateLimitEndsAt === null) return;
