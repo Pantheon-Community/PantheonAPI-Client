@@ -1,10 +1,11 @@
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
+import { StatefulButton } from "@/components/Buttons/StatefulButton";
 import { CodeBlock } from "@/components/CodeBlock/CodeBlock";
 import { ProfilePicture } from "@/components/ProfilePicture/ProfilePicture";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import "./ProfileDetails.css";
 
 export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ currentUser }) => {
@@ -14,33 +15,6 @@ export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ curren
     const handleToggle = useCallback((e: React.ToggleEvent<HTMLDetailsElement>) => {
         setIsShowingExtra(e.newState === "open");
     }, []);
-
-    const [isRefreshing, setIsRefreshing] = useState(false);
-
-    const [justDidRefresh, setJustDidRefresh] = useState(false);
-
-    useEffect(() => {
-        if (!justDidRefresh) return;
-
-        const timeout = setTimeout(setJustDidRefresh, 3_000, false);
-
-        return () => clearTimeout(timeout);
-    }, [justDidRefresh]);
-
-    const handleRefresh = useCallback(async () => {
-        setIsRefreshing(true);
-
-        await refreshUser();
-        setJustDidRefresh(true);
-
-        setIsRefreshing(false);
-    }, [refreshUser]);
-
-    const refreshButtonText = useMemo(() => {
-        if (isRefreshing) return "Refreshing...";
-        if (justDidRefresh) return "Refreshed!";
-        return "Refresh";
-    }, [justDidRefresh, isRefreshing]);
 
     return (
         <div className="profile-details">
@@ -62,14 +36,14 @@ export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ curren
                 <div className="profile-buttons">
                     <LogoutButton />
 
-                    <button
+                    <StatefulButton
                         className="refresh-button"
                         type="button"
-                        disabled={isRefreshing || justDidRefresh}
-                        onClick={handleRefresh}
-                    >
-                        {refreshButtonText}
-                    </button>
+                        onClick={refreshUser}
+                        textDo="Refresh"
+                        textDoing="Refreshing..."
+                        textDone="Refreshed!"
+                    />
                 </div>
             </div>
 

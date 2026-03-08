@@ -3,9 +3,30 @@
     flex-direction: column;
     gap: 1rem;
 
-    > .all-connections {
+    > .bad {
+        color: var(--text-bad);
+        margin-block: 1rem;
+        background-color: var(--bg-quarter-secondary);
+        width: fit-content;
+        padding: 1em;
+        border-radius: var(--rounded-extra);
+        text-align: center;
+    }
+
+    > h3 {
         display: flex;
-        flex-direction: column;
+        gap: 1em;
+        align-items: flex-end;
+    }
+
+    > .all-connections {
+        display: grid;
+        width: fit-content;
         gap: 1rem;
+
+        > div {
+            width: auto;
+            height: auto;
+        }
     }
 }

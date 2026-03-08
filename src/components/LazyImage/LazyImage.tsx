@@ -18,7 +18,8 @@ export const LazyImage: React.FC<ImageProps> = ({ primarySrc, fallbackSrc, alt, 
 
     useEffect(() => {
         if (primarySrc) setChosenSrc(primarySrc);
-    }, [primarySrc]);
+        else if (fallbackSrc) setChosenSrc(fallbackSrc);
+    }, [primarySrc, fallbackSrc]);
 
     const handleLoad = useCallback(() => setIsVisible(true), []);
 
@@ -29,7 +30,7 @@ export const LazyImage: React.FC<ImageProps> = ({ primarySrc, fallbackSrc, alt, 
     }, [chosenSrc, fallbackSrc]);
 
     return (
-        <div className={`lazy-image ${rest.className} ${isVisible ? "loaded" : ""}`}>
+        <div className={`lazy-image ${rest.className ?? ""} ${isVisible ? "loaded" : ""}`}>
             <img
                 src={chosenSrc}
                 loading="lazy"

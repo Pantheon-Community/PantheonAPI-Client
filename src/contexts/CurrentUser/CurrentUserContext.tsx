@@ -33,6 +33,10 @@ interface CurrentUserContextType {
 
     /** Refreshes only connections. */
     refreshUserConnections(): Promise<void>;
+
+    clearPrimaryConnection(): Promise<void>;
+
+    setPrimaryConnection(steam: SteamUserBasicWithTimes): Promise<void>;
 }
 
 const CurrentUserContext = createContext<CurrentUserContextType>({
@@ -42,6 +46,8 @@ const CurrentUserContext = createContext<CurrentUserContextType>({
     refresh: notImplementedFunctionAsync,
     refreshUser: notImplementedFunctionAsync,
     refreshUserConnections: notImplementedFunctionAsync,
+    clearPrimaryConnection: notImplementedFunctionAsync,
+    setPrimaryConnection: notImplementedFunctionAsync,
 });
 
 export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -175,6 +181,43 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [currentUser?.token, makeJsonRequest]);
 
+    const clearPrimaryConnection = useCallback(async () => {
+        if (currentUser?.token === undefined) return;
+
+        const response = await makeRequest("/users/@me/steam-users/primary", {
+            method: "delete",
+            headers: { authorization: `Bearer ${currentUser.token}` },
+        });
+
+        if (response) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+
+                return { ...prev, user: { ...prev.user, steam: null } };
+            });
+        }
+    }, [currentUser?.token, makeRequest]);
+
+    const setPrimaryConnection = useCallback(
+        async (steam: SteamUserBasicWithTimes) => {
+            if (currentUser?.token === undefined) return;
+
+            const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
+                method: "put",
+                headers: { authorization: `Bearer ${currentUser.token}` },
+            });
+
+            if (response) {
+                setCurrentUser((prev) => {
+                    if (prev === null) return null;
+
+                    return { ...prev, user: { ...prev.user, steam } };
+                });
+            }
+        },
+        [currentUser?.token, makeRequest],
+    );
+
     useEffect(() => {
         if (currentUser === null) return;
         if (isInSettings) return;
@@ -241,8 +284,19 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             refresh,
             refreshUser,
             refreshUserConnections,
+            clearPrimaryConnection,
+            setPrimaryConnection,
         };
-    }, [currentUser, logout, login, refresh, refreshUserConnections, refreshUser]);
+    }, [
+        currentUser,
+        logout,
+        login,
+        refresh,
+        refreshUserConnections,
+        refreshUser,
+        setPrimaryConnection,
+        clearPrimaryConnection,
+    ]);
 
     return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
 };

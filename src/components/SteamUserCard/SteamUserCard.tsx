@@ -1,8 +1,18 @@
 import { useSteamUserInfo } from "@/contexts/SteamUserCache/SteamUserCacheContext";
 import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
 import { useMemo } from "react";
+import { StatefulButton } from "../Buttons/StatefulButton";
 import { LazyImage } from "../LazyImage/LazyImage";
+import Steam from "./Steam.svg";
 import "./SteamUserCard.css";
+
+interface SteamUserCardProps {
+    user: SteamUserBasicWithTimes;
+
+    isPrimary?: boolean;
+
+    onClickButton?(): Promise<void>;
+}
 
 const dateLocale = new Intl.DateTimeFormat("en-NZ", {
     day: "numeric",
@@ -21,7 +31,8 @@ function getCountryEmoji(country: string): string | null {
     }
 }
 
-export const SteamUserCard: React.FC<{ user: SteamUserBasicWithTimes }> = ({ user }) => {
+export const SteamUserCard: React.FC<SteamUserCardProps> = (props) => {
+    const { user, isPrimary = false, onClickButton } = props;
     const { id, username } = user;
 
     const info = useSteamUserInfo(id);
@@ -45,11 +56,13 @@ export const SteamUserCard: React.FC<{ user: SteamUserBasicWithTimes }> = ({ use
     }, [info?.memberSince]);
 
     return (
-        <div className="steam-user-card">
+        <div className={`steam-user-card ${isPrimary ? "primary" : ""}`}>
             <LazyImage
                 primarySrc={info?.avatarFull}
+                fallbackSrc={Steam}
                 className="steam-avatar"
                 alt={`Steam profile of ${username}`}
+                title={username}
             />
 
             <p>{username}</p>
@@ -59,6 +72,15 @@ export const SteamUserCard: React.FC<{ user: SteamUserBasicWithTimes }> = ({ use
             {!!memberSinceString && <p className="steam-member-since">{memberSinceString}</p>}
 
             <p className="steam-id">{id}</p>
+
+            {!!onClickButton && !isPrimary && (
+                <StatefulButton
+                    onClick={onClickButton}
+                    textDo="Set as Primary"
+                    textDoing="Setting as Primary..."
+                    textDone="Set as Primary!"
+                />
+            )}
         </div>
     );
 };

@@ -7,21 +7,26 @@
     border-radius: var(--rounded-extra);
     padding: 0.5em;
     position: relative;
+    width: fit-content;
+    min-width: 240px;
+
+    &.primary {
+        border: solid 2px rgb(139, 102, 9);
+    }
 
     & .steam-avatar {
         grid-row: 1 / span 999;
-        width: 100%;
-        height: auto;
+        width: 64px;
+        height: 64px;
     }
 
-    > .steam-location {
+    > .steam-location, > .steam-member-since {
         color: var(--text-secondary);
         font-size: 14px;
     }
 
     > .steam-member-since {
-        color: var(--text-secondary);
-        font-size: 14px;
+        min-width: 300px;
     }
 
     > .steam-id {
@@ -35,5 +40,13 @@
         border-top-left-radius: var(--rounded-extra);
         font-family: monospace;
         border-bottom-right-radius: var(--rounded-extra);
+    }
+
+    > button {
+        margin-top: 0.5em;
+        grid-column: 1 / span 2;
+        display: flex;
+        gap: 0.5em;
+        width: fit-content;
     }
 }
