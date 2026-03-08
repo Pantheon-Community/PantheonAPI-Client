@@ -44,6 +44,7 @@
         gap: 1rem;
         overflow: hidden;
         max-width: 650px;
+        overflow: visible;
 
         > p {
             display: flex;

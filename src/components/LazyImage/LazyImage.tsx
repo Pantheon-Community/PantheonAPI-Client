@@ -5,16 +5,20 @@ interface ImageProps extends Omit<
     React.ImgHTMLAttributes<HTMLImageElement>,
     "src" | "loading" | "onLoad" | "onError"
 > {
-    primarySrc: string;
+    primarySrc: string | undefined | null;
+
+    alt: string;
 
     fallbackSrc?: string;
 }
 
 export const LazyImage: React.FC<ImageProps> = ({ primarySrc, fallbackSrc, alt, ...rest }) => {
-    const [chosenSrc, setChosenSrc] = useState(primarySrc);
+    const [chosenSrc, setChosenSrc] = useState<string>();
     const [isVisible, setIsVisible] = useState(false);
 
-    useEffect(() => setChosenSrc(primarySrc), [primarySrc]);
+    useEffect(() => {
+        if (primarySrc) setChosenSrc(primarySrc);
+    }, [primarySrc]);
 
     const handleLoad = useCallback(() => setIsVisible(true), []);
 

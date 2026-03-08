@@ -1,0 +1,11 @@
+.profile-connections {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    > .all-connections {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

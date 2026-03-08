@@ -1,6 +1,8 @@
 :root {
     /* Backgrounds */
     --bg-main: oklch(0% 0 0);
+    --bg-quarter-secondary: oklch(20% 0 0);
+    --bg-half-secondary: oklch(25% 0 0);
     --bg-secondary: oklch(35% 0 0);
     --bg-tertiary: oklch(45% 0 0);
     --bg-disabled: oklch(20% 0 0);
@@ -11,6 +13,7 @@
     /* Text */
     --text-main: oklch(95% 0 0);
     --text-secondary: oklch(65% 0 0);
+    --text-tertiary: oklch(60% 0 0);
     --text-warning: yellow;
     --text-bad: lightcoral;
     --text-good: lightgreen;

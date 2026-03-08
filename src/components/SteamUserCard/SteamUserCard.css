@@ -1,0 +1,39 @@
+.steam-user-card {
+    display: grid;
+    grid-template-columns: 64px auto;
+    align-items: start;
+    column-gap: 1em;
+    background-color: var(--bg-half-secondary);
+    border-radius: var(--rounded-extra);
+    padding: 0.5em;
+    position: relative;
+
+    & .steam-avatar {
+        grid-row: 1 / span 999;
+        width: 100%;
+        height: auto;
+    }
+
+    > .steam-location {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    > .steam-member-since {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    > .steam-id {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font-size: 12px;
+        padding: 0.25em 0.5em;
+        color: var(--text-tertiary);
+        background-color: var(--bg-quarter-secondary);
+        border-top-left-radius: var(--rounded-extra);
+        font-family: monospace;
+        border-bottom-right-radius: var(--rounded-extra);
+    }
+}

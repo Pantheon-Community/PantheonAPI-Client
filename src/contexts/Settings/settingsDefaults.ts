@@ -18,4 +18,5 @@ export const defaultSettings: Settings = {
     redirectUri: `${window.origin}/login`,
     maxRefreshMinutes: 3 * 24 * 60, // 3 days
     minRefreshSeconds: 30,
+    cacheRetentionPeriodHours: 5 * 24, // 5 days
 };

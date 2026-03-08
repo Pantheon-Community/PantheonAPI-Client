@@ -1,6 +1,6 @@
-import { NavLink } from "react-router";
+import { NavLink, type NavLinkProps } from "react-router";
 
-interface InternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface InternalLinkProps extends Omit<NavLinkProps, "to"> {
     href: string;
 }
 

@@ -1,19 +1,30 @@
 import { LoginButton } from "@/components/Buttons/LoginButton";
-import { LogoutButton } from "@/components/Buttons/LogoutButton";
-import { RefreshButton } from "@/components/Buttons/RefreshButton";
-import { CodeBlock } from "@/components/CodeBlock/CodeBlock";
+import { LinkGroup, type LinkGroupItem } from "@/components/LinkGroup/LinkGroup";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
-import { useCallback, useState } from "react";
-import "./ProfilePage.css";
+import { useHash } from "@/hooks/useHash";
+import { ProfileConnections } from "./SubPages/ProfileConnections";
+import { ProfileDetails } from "./SubPages/ProfileDetails";
+import { ProfileSessions } from "./SubPages/ProfileSessions";
+
+const subPages: LinkGroupItem[] = [
+    {
+        label: "Details",
+        hash: "",
+    },
+    {
+        label: "Steam Connections",
+        hash: "connections",
+    },
+    {
+        label: "Sessions",
+        hash: "sessions",
+    },
+];
 
 export const ProfilePage: React.FC = () => {
     const { currentUser } = useCurrentUser();
 
-    const [isShowingExtra, setIsShowingExtra] = useState(false);
-
-    const handleToggle = useCallback((e: React.ToggleEvent<HTMLDetailsElement>) => {
-        setIsShowingExtra(e.newState === "open");
-    }, []);
+    const hash = useHash();
 
     if (currentUser === null)
         return (
@@ -30,19 +41,15 @@ export const ProfilePage: React.FC = () => {
         <section className="profile-page">
             <h1>{currentUser.user.username}</h1>
 
-            <p>What a beautiful profile.</p>
+            <LinkGroup options={subPages} />
 
-            <div className="profile-buttons">
-                <LogoutButton />
-
-                <RefreshButton />
-            </div>
-
-            <details open={isShowingExtra} onToggle={handleToggle}>
-                <summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
-
-                <CodeBlock>{currentUser}</CodeBlock>
-            </details>
+            {hash === "sessions" ? (
+                <ProfileSessions currentUser={currentUser} />
+            ) : hash === "connections" ? (
+                <ProfileConnections currentUser={currentUser} />
+            ) : (
+                <ProfileDetails currentUser={currentUser} />
+            )}
         </section>
     );
 };

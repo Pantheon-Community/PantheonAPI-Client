@@ -187,6 +187,44 @@ export const SettingsPage: React.FC = () => {
                         Currently <b>{duration(Date.now() + settings.minRefreshSeconds * 1000)}</b>.
                     </p>
                 </div>
+
+                <div>
+                    <label>
+                        <p>Cache Retention Period</p>
+
+                        <input
+                            value={settings.cacheRetentionPeriodHours.toString()}
+                            onChange={makeNumberChangeHandler("cacheRetentionPeriodHours")}
+                            inputMode="numeric"
+                        />
+                    </label>
+
+                    <div className="button-container">
+                        <button
+                            type="reset"
+                            disabled={
+                                settings.cacheRetentionPeriodHours ===
+                                defaultSettings.cacheRetentionPeriodHours
+                            }
+                            onClick={makeResetHandler("cacheRetentionPeriodHours")}
+                        >
+                            Reset
+                        </button>
+                    </div>
+
+                    <p>
+                        Cached data will be evicted once at least this many hours have passed since
+                        it was inserted.
+                        <br />
+                        Currently{" "}
+                        <b>
+                            {duration(
+                                Date.now() + settings.cacheRetentionPeriodHours * 60 * 60 * 1000,
+                            )}
+                        </b>
+                        .
+                    </p>
+                </div>
             </div>
 
             <h3>Advanced Stuff</h3>

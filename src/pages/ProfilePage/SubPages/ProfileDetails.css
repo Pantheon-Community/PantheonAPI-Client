@@ -1,0 +1,40 @@
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    > .summary {
+        display: grid;
+        grid-template-columns: 128px auto;
+        column-gap: 1em;
+
+        > .profile-picture {
+            grid-row: 1 / span 3;
+        }
+
+        > .discord-id {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5em;
+
+            > span {
+                color: var(--text-secondary);
+            }
+        }
+
+        > .profile-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+
+            > .refresh-button {
+                padding: 0.5em 0.75em;
+                font-size: 16px;
+            }
+        }
+    }
+
+    > details {
+        width: fit-content;
+    }
+}

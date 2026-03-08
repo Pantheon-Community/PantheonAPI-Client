@@ -8,4 +8,6 @@ export interface Settings {
     readonly maxRefreshMinutes: number;
 
     readonly minRefreshSeconds: number;
+
+    readonly cacheRetentionPeriodHours: number;
 }

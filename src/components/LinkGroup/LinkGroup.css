@@ -1,0 +1,24 @@
+.link-group {
+    display: flex;
+    background-color: var(--bg-half-secondary);
+    border-radius: var(--rounded-extra);
+
+    > a {
+        padding: 0.25em 0.5em;
+        border-radius: var(--rounded-extra);
+
+        &.selected {
+            background-color: var(--bg-tertiary);
+        }
+
+        &:not(.selected) {
+            &:hover, &:focus {
+                background-color: var(--bg-secondary);
+            }
+        }
+
+        &:active {
+            scale: 95%;
+        }
+    }
+}

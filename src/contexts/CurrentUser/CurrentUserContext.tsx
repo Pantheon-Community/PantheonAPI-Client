@@ -1,5 +1,7 @@
 import type { LoginRequest } from "@/shared/types/Requests/LoginRequest";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
+import type { GetMeResponse } from "@/shared/types/Responses/GetMeResponse";
+import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
 import { duration } from "@/utils/relativeTime";
 import {
     createContext,
@@ -23,7 +25,14 @@ interface CurrentUserContextType {
 
     logout(): Promise<void>;
 
+    /** Refreshes the entire user and session. */
     refresh(): Promise<void>;
+
+    /** Refreshes the entire user, which includes connections. */
+    refreshUser(): Promise<void>;
+
+    /** Refreshes only connections. */
+    refreshUserConnections(): Promise<void>;
 }
 
 const CurrentUserContext = createContext<CurrentUserContextType>({
@@ -31,6 +40,8 @@ const CurrentUserContext = createContext<CurrentUserContextType>({
     login: notImplementedFunctionAsync,
     logout: notImplementedFunctionAsync,
     refresh: notImplementedFunctionAsync,
+    refreshUser: notImplementedFunctionAsync,
+    refreshUserConnections: notImplementedFunctionAsync,
 });
 
 export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -41,6 +52,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     useEffect(() => saveStoredCurrentUser(currentUser), [currentUser]);
 
+    /** Session related lock only. */
     const isDoingSomething = useRef(false);
 
     const lastLoggedAt = useRef(0);
@@ -122,6 +134,47 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         [currentUser?.token, makeJsonRequest],
     );
 
+    const refreshUser = useCallback(async () => {
+        if (currentUser?.token === undefined) return;
+
+        const response = await makeJsonRequest<GetMeResponse>("/users/@me", {
+            headers: {
+                authorization: `Bearer ${currentUser.token}`,
+                accept: "application/json",
+            },
+        });
+
+        if (response !== null) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+
+                return { ...prev, ...response };
+            });
+        }
+    }, [makeJsonRequest, currentUser?.token]);
+
+    const refreshUserConnections = useCallback(async () => {
+        if (currentUser?.token === undefined) return;
+
+        const response = await makeJsonRequest<SteamUserBasicWithTimes[]>(
+            "/users/@me/steam-users",
+            {
+                headers: {
+                    authorization: `Bearer ${currentUser.token}`,
+                    accept: "application/json",
+                },
+            },
+        );
+
+        if (response !== null) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+
+                return { ...prev, steamUsers: response };
+            });
+        }
+    }, [currentUser?.token, makeJsonRequest]);
+
     useEffect(() => {
         if (currentUser === null) return;
         if (isInSettings) return;
@@ -186,8 +239,10 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             login,
             logout,
             refresh,
+            refreshUser,
+            refreshUserConnections,
         };
-    }, [currentUser, logout, login, refresh]);
+    }, [currentUser, logout, login, refresh, refreshUserConnections, refreshUser]);
 
     return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>;
 };
