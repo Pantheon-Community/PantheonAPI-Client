@@ -30,5 +30,10 @@
     "css.format.braceStyle": "collapse",
     "css.format.maxPreserveNewLines": 0,
     "css.format.preserveNewLines": true,
-    "css.format.spaceAroundSelectorSeparator": true
+    "css.format.spaceAroundSelectorSeparator": true,
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "html.format.wrapLineLength": 0,
+    "html.format.wrapAttributes": "preserve-aligned"
 }
