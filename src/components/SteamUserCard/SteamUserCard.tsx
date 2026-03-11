@@ -1,4 +1,3 @@
-import { useSteamUserInfo } from "@/contexts/SteamUserCache/SteamUserCacheContext";
 import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
 import { useMemo } from "react";
 import { StatefulButton } from "../Buttons/StatefulButton";
@@ -33,32 +32,30 @@ function getCountryEmoji(country: string): string | null {
 
 export const SteamUserCard: React.FC<SteamUserCardProps> = (props) => {
     const { user, isPrimary = false, onClickButton } = props;
-    const { id, username } = user;
-
-    const info = useSteamUserInfo(id);
+    const { id, username, avatar, location, memberSince } = user;
 
     const locationString = useMemo(() => {
-        if (!info?.location) return null;
+        if (!location) return null;
 
-        const emoji = getCountryEmoji(info.location);
+        const emoji = getCountryEmoji(location);
 
         if (emoji !== null) {
-            return `${emoji} ${info.location}`;
+            return `${emoji} ${location}`;
         }
 
-        return info.location;
-    }, [info?.location]);
+        return location;
+    }, [location]);
 
     const memberSinceString = useMemo(() => {
-        if (!info?.memberSince) return null;
+        if (!memberSince) return null;
 
-        return `Created ${dateLocale.format(new Date(info.memberSince))}`;
-    }, [info?.memberSince]);
+        return `Created ${dateLocale.format(new Date(memberSince))}`;
+    }, [memberSince]);
 
     return (
         <div className={`steam-user-card ${isPrimary ? "primary" : ""}`}>
             <LazyImage
-                primarySrc={info?.avatarFull}
+                primarySrc={avatar}
                 fallbackSrc={Steam}
                 className="steam-avatar"
                 alt={`Steam profile of ${username}`}
