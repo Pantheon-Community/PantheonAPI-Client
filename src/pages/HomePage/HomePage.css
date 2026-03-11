@@ -1,0 +1,51 @@
+.home-page {
+    & .go-to-main-website {
+        padding-inline: 0.1em;
+        padding-block: 0.1em;
+        border-radius: var(--rounded);
+        color: var(--text-link);
+        display: inline-flex;
+
+        &:hover, &:focus {
+            background-color: var(--bg-secondary);
+        }
+    }
+
+    > nav {
+        display: grid;
+
+        > div {
+            display: flex;
+            gap: 0.5em;
+
+            &:hover, &:focus-within {
+                scale: 105%;
+
+                > a {
+                    background-color: var(--bg-half-secondary);
+                    text-decoration: underline solid 1px;
+                }
+
+                > button {
+                    opacity: 1;
+                }
+            }
+
+            > a {
+                padding: 0.25em 0.75em;
+                padding-bottom: 0.3em;
+                color: var(--text-link);
+                flex-grow: 1;
+                border-radius: var(--rounded);
+
+                &:active {
+                    scale: 95%;
+                }
+            }
+
+            > button {
+                opacity: 0;
+            }
+        }
+    }
+}

@@ -1,5 +1,18 @@
+import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
 import { LoginButton } from "@/components/Buttons/LoginButton";
+import { ExternalLink } from "@/components/Links/ExternalLink";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import "./HomePage.css";
+
+const NavItem: React.FC<{ href: string; children: string }> = ({ href, children }) => (
+    <div>
+        <ExternalLink href={href} title={children}>
+            {children}
+        </ExternalLink>
+
+        <CopyTextButton text={href} />
+    </div>
+);
 
 export const HomePage: React.FC = () => {
     const { currentUser } = useCurrentUser();
@@ -8,9 +21,41 @@ export const HomePage: React.FC = () => {
         <section className="home-page">
             <h1>Home</h1>
 
-            <p>Welcome to the Pantheon API client.</p>
+            <p>Welcome to the Pantheon API development client.</p>
 
-            <p>There's not much here yet, but will be soon™</p>
+            <p>
+                If you weren't directed here by a developer, and aren't sure what this is, you
+                might've instead meant to{" "}
+                <ExternalLink
+                    className="go-to-main-website"
+                    title="Pantheon Community Main Website"
+                    href="https://pantheoncommunity.org"
+                >
+                    go to our main website.
+                </ExternalLink>
+            </p>
+
+            <h3>Quick Links</h3>
+
+            <nav>
+                <NavItem href="https://pantheoncommunity.org">Main Website</NavItem>
+
+                <NavItem href="https://api.pantheoncommunity.org">Pantheon API</NavItem>
+
+                <NavItem href="https://github.com/Pantheon-Community/PantheonAPI">
+                    Pantheon API (Github)
+                </NavItem>
+
+                <NavItem href="https://github.com/Pantheon-Community/PantheonAPI-Client">
+                    Pantheon API Client (Github)
+                </NavItem>
+
+                <NavItem href="https://github.com/Pantheon-Community/PantheonAPI-Types">
+                    Pantheon API Types (Github)
+                </NavItem>
+
+                <NavItem href="https://discord.gg/zBkdRSCEpG">Pantheon Discord</NavItem>
+            </nav>
 
             {currentUser === null && <LoginButton />}
         </section>

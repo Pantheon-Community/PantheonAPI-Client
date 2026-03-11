@@ -17,6 +17,7 @@
     --text-warning: yellow;
     --text-bad: lightcoral;
     --text-good: lightgreen;
+    --text-link: rgb(144, 207, 228);
     /* Other */
     --rounded: 0.25em;
     --rounded-extra: 0.5em;
@@ -52,7 +53,7 @@ main {
     height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6, p, a, button, input, summary, dialog {
+h1, h2, h3, h4, h5, h6, p, a, button, input, summary, dialog, div {
     transition: all ease-out var(--transition-duration);
 }
 
