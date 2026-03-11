@@ -1,3 +1,4 @@
+import { RequestMethod } from "@/shared/types/RequestMethod";
 import type { LoginRequest } from "@/shared/types/Requests/LoginRequest";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
 import type { GetMeResponse } from "@/shared/types/Responses/GetMeResponse";
@@ -75,7 +76,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const response = await makeJsonRequest<AuthResponse>(
                 "/login",
                 {
-                    method: "post",
+                    method: RequestMethod.Post,
                     body: JSON.stringify({ code, redirectUri } satisfies LoginRequest),
                     headers: { accept: "application/json", "content-type": "application/json" },
                 },
@@ -100,7 +101,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         await makeRequest(
             "/logout",
             {
-                method: "post",
+                method: RequestMethod.Post,
                 headers: { authorization: `Bearer ${currentUser.token}` },
             },
             { isAuthRelated: true },
@@ -121,7 +122,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const response = await makeJsonRequest<AuthResponse>(
                 "/refresh",
                 {
-                    method: "post",
+                    method: RequestMethod.Post,
                     headers: {
                         authorization: `Bearer ${currentUser.token}`,
                         accept: "application/json",
@@ -185,7 +186,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (currentUser?.token === undefined) return;
 
         const response = await makeRequest("/users/@me/steam-users/primary", {
-            method: "delete",
+            method: RequestMethod.Delete,
             headers: { authorization: `Bearer ${currentUser.token}` },
         });
 
@@ -203,7 +204,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             if (currentUser?.token === undefined) return;
 
             const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
-                method: "put",
+                method: RequestMethod.Put,
                 headers: { authorization: `Bearer ${currentUser.token}` },
             });
 
