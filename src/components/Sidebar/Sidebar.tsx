@@ -15,16 +15,14 @@ export const Sidebar: React.FC = () => {
 
                 {currentUser !== null && (
                     <InternalLink href="/profile">
-                        <span className="inline-profile">
-                            <span>Profile</span>
+                        <span>Profile</span>
 
-                            <ProfilePicture
-                                id={currentUser.user.id}
-                                username={currentUser.user.username}
-                                avatar={currentUser.user.avatar}
-                                size={32}
-                            />
-                        </span>
+                        <ProfilePicture
+                            id={currentUser.user.id}
+                            username={currentUser.user.username}
+                            avatar={currentUser.user.avatar}
+                            size={32}
+                        />
                     </InternalLink>
                 )}
 

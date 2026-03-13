@@ -17,6 +17,10 @@
         > a {
             padding: 0.25rem 0.75rem;
             transition: all ease-out 100ms;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
 
             &:hover, &:focus-visible {
                 padding-left: 1.5em;
@@ -28,13 +32,6 @@
 
             &.active {
                 background-color: var(--bg-tertiary);
-            }
-
-            > .inline-profile {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 1rem;
             }
 
             > .secondary {
