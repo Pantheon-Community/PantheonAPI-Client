@@ -21,22 +21,18 @@ export const HomePage: React.FC = () => {
     return (
         <section className="home-page">
             <h1>Home</h1>
-
             <p>Welcome to the Pantheon API development client.</p>
-
             <p>
-                If you weren't directed here by a developer, and aren't sure what this is, you
-                might've instead meant to{" "}
+                This website is intended for use by developers. Our main website is{" "}
                 <InlineExternalLink
                     title="Pantheon Community Main Website"
                     href="https://pantheoncommunity.org"
                 >
-                    go to our main website.
+                    pantheoncommunity.org
                 </InlineExternalLink>
             </p>
 
             <h3>Quick Links</h3>
-
             <nav>
                 <NavItem href="https://pantheoncommunity.org">Main Website</NavItem>
 
@@ -56,7 +52,6 @@ export const HomePage: React.FC = () => {
 
                 <NavItem href="https://discord.gg/zBkdRSCEpG">Pantheon Discord</NavItem>
             </nav>
-
             {currentUser === null && <LoginButton />}
         </section>
     );
