@@ -1,7 +1,7 @@
 import { BASE_STORAGE_KEY } from "@/constants/baseStorageKey";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
 
-const KEY = `${BASE_STORAGE_KEY}.current-user"` as const;
+const KEY = `${BASE_STORAGE_KEY}.current-user` as const;
 
 export function getStoredCurrentUser(): AuthResponse | null {
     const existing = localStorage.getItem(KEY);
