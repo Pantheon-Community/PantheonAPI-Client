@@ -1,6 +1,7 @@
 import { CopyTextButton } from "@/components/Buttons/CopyTextButton/CopyTextButton";
 import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
 import { ExternalLink } from "@/components/Links/ExternalLink/ExternalLink";
+import { InlineExternalLink } from "@/components/Links/InlineExternalLink/InlineExternalLink";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import "./HomePage.css";
 
@@ -26,13 +27,12 @@ export const HomePage: React.FC = () => {
             <p>
                 If you weren't directed here by a developer, and aren't sure what this is, you
                 might've instead meant to{" "}
-                <ExternalLink
-                    className="go-to-main-website"
+                <InlineExternalLink
                     title="Pantheon Community Main Website"
                     href="https://pantheoncommunity.org"
                 >
                     go to our main website.
-                </ExternalLink>
+                </InlineExternalLink>
             </p>
 
             <h3>Quick Links</h3>

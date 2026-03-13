@@ -1,7 +1,7 @@
-button.copy-text-button {
+.copy-text-button {
     min-width: 62px;
 
     &:active, &.clicked {
-        border-color: var(--text-good);
+        border-color: var(--text-good) !important;
     }
 }

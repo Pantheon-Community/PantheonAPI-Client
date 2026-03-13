@@ -33,10 +33,6 @@
             &.active {
                 background-color: var(--bg-tertiary);
             }
-
-            > .secondary {
-                color: var(--text-secondary)
-            }
         }
     }
 }

@@ -1,14 +1,6 @@
 .home-page {
-    & .go-to-main-website {
-        padding-inline: 0.1em;
-        padding-block: 0.1em;
-        border-radius: var(--rounded);
-        color: var(--text-link);
-        display: inline-flex;
-
-        &:hover, &:focus {
-            background-color: var(--bg-secondary);
-        }
+    > h3 {
+        margin-top: 2rem;
     }
 
     > nav {

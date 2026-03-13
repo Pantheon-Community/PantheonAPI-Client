@@ -28,9 +28,7 @@ export const Sidebar: React.FC = () => {
 
                 <InternalLink href="/settings">Settings</InternalLink>
 
-                <InternalLink href="/components">
-                    <span className="secondary">Components</span>
-                </InternalLink>
+                <InternalLink href="/components">Components</InternalLink>
             </nav>
         </div>
     );
