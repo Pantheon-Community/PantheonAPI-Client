@@ -1,18 +1,18 @@
 .sidebar {
     background-color: rgba(64, 64, 64, 0.4);
     backdrop-filter: blur(8px);
-    padding-block: 0.5rem;
+    padding-block: 1rem;
     white-space: nowrap;
 
     > h4 {
-        padding-inline: 0.75rem;
-        padding-bottom: 0.5rem;
+        padding-inline: 1rem;
+        padding-bottom: 1rem;
         text-align: center;
     }
 
     nav {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-auto-rows: 1fr;
 
         > a {
             padding: 0.25rem 0.75rem;
@@ -35,6 +35,10 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 1rem;
+            }
+
+            > .secondary {
+                color: var(--text-secondary)
             }
         }
     }
