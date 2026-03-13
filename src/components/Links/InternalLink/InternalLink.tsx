@@ -7,6 +7,8 @@ interface InternalLinkProps extends Omit<
     href: NavLinkProps["to"];
 }
 
-export const InternalLink: React.FC<InternalLinkProps> = ({ href, children }) => (
-    <NavLink to={href}>{children}</NavLink>
+export const InternalLink: React.FC<InternalLinkProps> = ({ href, children, ...props }) => (
+    <NavLink to={href} {...props}>
+        {children}
+    </NavLink>
 );
