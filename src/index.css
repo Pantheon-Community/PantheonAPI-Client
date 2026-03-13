@@ -42,7 +42,7 @@ body {
     height: 100%;
     width: 100%;
     display: flex;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: system-ui, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     color: var(--text-main);
 }
@@ -158,13 +158,25 @@ details {
         cursor: pointer;
         user-select: none;
 
-        &:hover, &:active {
+        &:hover, &:focus, &:active {
             background-color: var(--bg-secondary);
         }
 
         &:active {
-            scale: 98%;
+            scale: 102%;
         }
+    }
+
+    &.margined > p:first-of-type {
+        padding-top: 1em;
+    }
+
+    &.margined > p:last-of-type {
+        padding-bottom: 1em;
+    }
+
+    &.indented > :not(summary) {
+        padding-left: 2.8em
     }
 }
 
@@ -192,4 +204,8 @@ dialog {
     to {
         scale: 100%;
     }
+}
+
+.bad {
+    color: var(--text-bad);
 }

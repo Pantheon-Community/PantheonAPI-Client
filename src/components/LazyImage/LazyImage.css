@@ -1,9 +1,11 @@
 .lazy-image {
     display: flex;
-    animation: lazy-image-pulse 1s infinite alternate ease-in-out;
+    animation: lazy-image-pulse 0.7s infinite alternate ease-in-out;
 
     & > img {
         visibility: hidden;
+        width: 100%;
+        height: 100%;
     }
 
     &.loaded {
@@ -17,10 +19,10 @@
 
 @keyframes lazy-image-pulse {
     from {
-        background-color: var(--bg-secondary);
+        background-color: var(--bg-quarter-secondary);
     }
 
     to {
-        background-color: var(--bg-tertiary);
+        background-color: var(--bg-half-secondary);
     }
 }

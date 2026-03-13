@@ -1,19 +1,15 @@
-import { useHash } from "@/hooks/useHash";
-import { InternalLink } from "../Links/InternalLink";
+import { useLocationHash } from "@/hooks/useLocationHash";
+import { InternalLink } from "../Links/InternalLink/InternalLink";
 import "./LinkGroup.css";
 
 export interface LinkGroupItem {
-    label: React.ReactNode;
+    label: string;
 
     hash: string;
 }
 
-interface LinkGroupProps {
-    options: LinkGroupItem[];
-}
-
-export const LinkGroup: React.FC<LinkGroupProps> = ({ options }) => {
-    const hash = useHash();
+export const LinkGroup: React.FC<{ options: LinkGroupItem[] }> = ({ options }) => {
+    const hash = useLocationHash();
 
     return (
         <nav className="link-group">

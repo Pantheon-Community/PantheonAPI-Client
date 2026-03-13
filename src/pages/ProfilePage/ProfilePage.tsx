@@ -1,7 +1,7 @@
-import { LoginButton } from "@/components/Buttons/LoginButton";
+import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
 import { LinkGroup, type LinkGroupItem } from "@/components/LinkGroup/LinkGroup";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
-import { useHash } from "@/hooks/useHash";
+import { useLocationHash } from "@/hooks/useLocationHash";
 import { ProfileConnections } from "./SubPages/ProfileConnections";
 import { ProfileDetails } from "./SubPages/ProfileDetails";
 import { ProfileSessions } from "./SubPages/ProfileSessions";
@@ -24,7 +24,7 @@ const subPages: LinkGroupItem[] = [
 export const ProfilePage: React.FC = () => {
     const { currentUser } = useCurrentUser();
 
-    const hash = useHash();
+    const hash = useLocationHash();
 
     if (currentUser === null)
         return (
@@ -38,7 +38,7 @@ export const ProfilePage: React.FC = () => {
         );
 
     return (
-        <section className="profile-page">
+        <section>
             <h1>{currentUser.user.username}</h1>
 
             <LinkGroup options={subPages} />

@@ -1,43 +1,44 @@
+import type { SiteImageData } from "@/types/SiteImageData";
 import { useCallback, useEffect, useState } from "react";
 import "./LazyImage.css";
 
-interface ImageProps extends Omit<
-    React.ImgHTMLAttributes<HTMLImageElement>,
-    "src" | "loading" | "onLoad" | "onError"
-> {
-    primarySrc: string | undefined | null;
+interface LazyImageProps {
+    primary: SiteImageData | null;
 
-    alt: string;
+    fallback?: SiteImageData;
 
-    fallbackSrc?: string;
+    title?: string;
+
+    className?: string;
+
+    style?: React.CSSProperties;
 }
 
-export const LazyImage: React.FC<ImageProps> = ({ primarySrc, fallbackSrc, alt, ...rest }) => {
-    const [chosenSrc, setChosenSrc] = useState<string>();
+export const LazyImage: React.FC<LazyImageProps> = (props) => {
+    const { primary, fallback, title, className, style } = props;
+
+    const [chosen, setChosen] = useState<SiteImageData>();
+
     const [isVisible, setIsVisible] = useState(false);
 
-    useEffect(() => {
-        if (primarySrc) setChosenSrc(primarySrc);
-        else if (fallbackSrc) setChosenSrc(fallbackSrc);
-    }, [primarySrc, fallbackSrc]);
+    useEffect(() => setChosen(primary ?? fallback), [fallback, primary]);
 
     const handleLoad = useCallback(() => setIsVisible(true), []);
 
-    const handleError = useCallback(() => {
-        if (chosenSrc !== fallbackSrc && fallbackSrc) {
-            setChosenSrc(fallbackSrc);
-        }
-    }, [chosenSrc, fallbackSrc]);
+    const handleError = useCallback(() => setChosen(fallback), [fallback]);
 
     return (
-        <div className={`lazy-image ${rest.className ?? ""} ${isVisible ? "loaded" : ""}`}>
+        <div
+            className={`lazy-image${isVisible ? " loaded" : ""} ${className ?? ""}`}
+            title={title}
+            style={style}
+        >
             <img
-                src={chosenSrc}
+                src={chosen?.src}
+                alt={chosen?.alt}
                 loading="lazy"
-                alt={alt}
                 onLoad={handleLoad}
                 onError={handleError}
-                {...rest}
             />
         </div>
     );

@@ -1,26 +1,72 @@
-import { StatefulButton } from "@/components/Buttons/StatefulButton";
+import { StatefulButton } from "@/components/Buttons/StatefulButton/StatefulButton";
 import { SteamUserCard } from "@/components/SteamUserCard/SteamUserCard";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
 import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
 import { useCallback } from "react";
 import "./ProfileConnections.css";
 
 export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ currentUser }) => {
-    const { refreshUserConnections, clearPrimaryConnection, setPrimaryConnection } =
-        useCurrentUser();
+    const { makeRequest, makeJsonRequest } = usePantheonApi();
+
+    const { setCurrentUser } = useCurrentUser();
 
     const mainConnection = currentUser.user.steam;
     const connections = currentUser.steamUsers;
 
     const makeSelectHandler = useCallback(
-        (connection: SteamUserBasicWithTimes) => {
+        (steam: SteamUserBasicWithTimes) => {
             return async () => {
-                await setPrimaryConnection(connection);
+                const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
+                    method: "put",
+                    headers: { authorization: `Bearer ${currentUser.token}` },
+                });
+
+                if (response) {
+                    setCurrentUser((prev) => {
+                        if (prev === null) return null;
+                        return { ...prev, user: { ...prev.user, steam } };
+                    });
+                }
             };
         },
-        [setPrimaryConnection],
+        [makeRequest, currentUser.token, setCurrentUser],
     );
+
+    const clearPrimaryConnection = useCallback(async () => {
+        const response = await makeRequest("/users/@me/steam-users/primary", {
+            method: "delete",
+            headers: { authorization: `Bearer ${currentUser.token}` },
+        });
+
+        if (response) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+                return { ...prev, user: { ...prev.user, steam: null } };
+            });
+        }
+    }, [currentUser.token, setCurrentUser, makeRequest]);
+
+    const refreshUserConnections = useCallback(async () => {
+        const response = await makeJsonRequest<SteamUserBasicWithTimes[]>(
+            "/users/@me/steam-users",
+            {
+                headers: {
+                    authorization: `Bearer ${currentUser.token}`,
+                    accept: "application/json",
+                },
+            },
+        );
+
+        if (response !== null) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+
+                return { ...prev, steamUsers: response };
+            });
+        }
+    }, [makeJsonRequest, currentUser.token, setCurrentUser]);
 
     return (
         <div className="profile-connections">

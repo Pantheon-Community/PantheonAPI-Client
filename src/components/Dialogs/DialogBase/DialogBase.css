@@ -1,0 +1,28 @@
+.dialog-base-contents {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    > h2 {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 5rem;
+
+        > span {
+            color: var(--text-bad);
+        }
+
+        > button {
+            font-size: 16px;
+            padding: 0.25em 0.5em;
+        }
+    }
+
+    > div {
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

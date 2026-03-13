@@ -1,7 +1,7 @@
 import type { Settings } from "@/contexts/Settings/Settings";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
+import { notImplementedFunction } from "@/utils/notImplementedFn";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { notImplementedFunction } from "../utils";
 import { getStoredSettings, saveStoredSettings } from "./settingsHelpers";
 
 interface SettingsContextType {

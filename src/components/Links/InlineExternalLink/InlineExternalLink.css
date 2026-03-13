@@ -1,0 +1,17 @@
+.inline-external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+
+    > span {
+        color: var(--text-link);
+    }
+
+    > svg {
+        color: var(--text-link);
+    }
+
+    &:hover {
+        text-decoration: underline solid 1px var(--text-link);
+    }
+}

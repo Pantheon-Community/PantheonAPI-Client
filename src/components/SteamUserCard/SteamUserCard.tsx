@@ -1,8 +1,9 @@
+import { SteamImage } from "@/images/Steam";
 import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
+import type { SiteImageData } from "@/types/SiteImageData";
 import { useMemo } from "react";
-import { StatefulButton } from "../Buttons/StatefulButton";
+import { StatefulButton } from "../Buttons/StatefulButton/StatefulButton";
 import { LazyImage } from "../LazyImage/LazyImage";
-import Steam from "./Steam.svg";
 import "./SteamUserCard.css";
 
 interface SteamUserCardProps {
@@ -34,6 +35,14 @@ export const SteamUserCard: React.FC<SteamUserCardProps> = (props) => {
     const { user, isPrimary = false, onClickButton } = props;
     const { id, username, avatar, location, memberSince } = user;
 
+    const primary = useMemo<SiteImageData | null>(() => {
+        if (avatar === null) {
+            return null;
+        }
+
+        return { src: avatar, alt: `Steam avatar of ${username}` };
+    }, [avatar, username]);
+
     const locationString = useMemo(() => {
         if (!location) return null;
 
@@ -53,13 +62,12 @@ export const SteamUserCard: React.FC<SteamUserCardProps> = (props) => {
     }, [memberSince]);
 
     return (
-        <div className={`steam-user-card ${isPrimary ? "primary" : ""}`}>
+        <div className={`steam-user-card${isPrimary ? " primary" : ""}`}>
             <LazyImage
-                primarySrc={avatar}
-                fallbackSrc={Steam}
+                primary={primary}
+                fallback={SteamImage}
+                title={`Steam profile of ${username}`}
                 className="steam-avatar"
-                alt={`Steam profile of ${username}`}
-                title={username}
             />
 
             <p>{username}</p>

@@ -1,19 +1,19 @@
-import type { ApiErrorData } from "./ApiErrorData";
+import type { PantheonErrorData } from "@/types/PantheonErrorData";
 
-export interface ExtraInit {
+export interface RequestFlags {
     isAuthRelated?: boolean;
 }
 
 export interface PantheonApi {
+    readonly loginUrl: string;
+
     readonly isRateLimited: boolean;
 
-    readonly latestError: ApiErrorData | null;
+    readonly latestError: PantheonErrorData | null;
 
-    handleErrorClose(): void;
+    makeRequest(path: string, init?: RequestInit, flags?: RequestFlags): Promise<boolean>;
 
-    makeRequest(path: string, init?: RequestInit, extra?: ExtraInit): Promise<boolean>;
+    makeJsonRequest<T>(path: string, init?: RequestInit, flags?: RequestFlags): Promise<T | null>;
 
-    makeJsonRequest<T>(path: string, init?: RequestInit, extra?: ExtraInit): Promise<T | null>;
-
-    makeTextRequest(path: string, init?: RequestInit, extra?: ExtraInit): Promise<string | null>;
+    makeTextRequest(path: string, init?: RequestInit, flags?: RequestFlags): Promise<string | null>;
 }

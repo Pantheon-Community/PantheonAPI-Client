@@ -1,20 +1,36 @@
-import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
-import { LogoutButton } from "@/components/Buttons/LogoutButton";
-import { StatefulButton } from "@/components/Buttons/StatefulButton";
+import { CopyTextButton } from "@/components/Buttons/CopyTextButton/CopyTextButton";
+import { LogoutButton } from "@/components/Buttons/LogoutButton/LogoutButton";
+import { StatefulButton } from "@/components/Buttons/StatefulButton/StatefulButton";
 import { CodeBlock } from "@/components/CodeBlock/CodeBlock";
+import { Details } from "@/components/Details/Details";
 import { ProfilePicture } from "@/components/ProfilePicture/ProfilePicture";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
-import { useCallback, useState } from "react";
+import type { GetMeResponse } from "@/shared/types/Responses/GetMeResponse";
+import { useCallback } from "react";
 import "./ProfileDetails.css";
 
 export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ currentUser }) => {
-    const { refreshUser } = useCurrentUser();
-    const [isShowingExtra, setIsShowingExtra] = useState(false);
+    const { makeJsonRequest } = usePantheonApi();
 
-    const handleToggle = useCallback((e: React.ToggleEvent<HTMLDetailsElement>) => {
-        setIsShowingExtra(e.newState === "open");
-    }, []);
+    const { setCurrentUser } = useCurrentUser();
+
+    const refreshUser = useCallback(async () => {
+        const response = await makeJsonRequest<GetMeResponse>("/users/@me", {
+            headers: {
+                authorization: `Bearer ${currentUser.token}`,
+                accept: "application/json",
+            },
+        });
+
+        if (response !== null) {
+            setCurrentUser((prev) => {
+                if (prev === null) return null;
+                return { ...prev, ...response };
+            });
+        }
+    }, [makeJsonRequest, currentUser.token, setCurrentUser]);
 
     return (
         <div className="profile-details">
@@ -47,11 +63,9 @@ export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ curren
                 </div>
             </div>
 
-            <details open={isShowingExtra} onToggle={handleToggle}>
-                <summary>{isShowingExtra ? "Hide" : "Show"} Raw Data</summary>
-
+            <Details summaryWhenClosed="Show Raw Data" summaryWhenOpen="Hide Raw Data">
                 <CodeBlock>{currentUser}</CodeBlock>
-            </details>
+            </Details>
         </div>
     );
 };

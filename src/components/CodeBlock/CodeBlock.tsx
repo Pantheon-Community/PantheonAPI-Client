@@ -1,11 +1,12 @@
 import hljs from "highlight.js/lib/common";
+import jsonLanguage from "highlight.js/lib/languages/json";
+import "highlight.js/styles/atom-one-dark.css";
 import { useEffect, useMemo, useRef } from "react";
 
-interface CodeBlockProps {
-    children: unknown;
-}
+hljs.registerLanguage("json", jsonLanguage);
 
-export const CodeBlock: React.FC<CodeBlockProps> = ({ children }) => {
+/** A `<code>` element with highlighted JSON code. */
+export const CodeBlock: React.FC<{ children: unknown }> = ({ children }) => {
     const rawContent = useMemo(() => {
         try {
             return JSON.stringify(children, undefined, 4);
@@ -25,6 +26,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ children }) => {
     useEffect(() => {
         if (elementRef.current === null) return;
         if (lastHighlightedText.current === rawContent) return;
+
         lastHighlightedText.current = rawContent;
 
         if (elementRef.current.getAttribute("data-highlighted") === "yes") {

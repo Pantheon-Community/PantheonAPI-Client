@@ -1,17 +1,28 @@
 import type { SiteErrorObject } from "@/shared/types/SiteErrorObject";
-import type { ApiResponseData } from "./ApiErrorData";
+import type { NonOkResponseData } from "@/types/NonOkResponseData";
 
-interface MaybeError {
-    title?: unknown;
+export function makeLoginLink(clientId: string, redirectUri: string, state: string): string {
+    const linkParams = new URLSearchParams([
+        ["response_type", "code"],
+        ["client_id", clientId],
+        ["state", state],
+        ["redirect_uri", redirectUri],
+        ["scope", "identify+connections"],
+    ]);
 
-    description?: unknown;
+    return `https://discord.com/oauth2/authorize?${linkParams.toString()}`;
 }
 
 function isSiteErrorObject(error: unknown): error is SiteErrorObject {
     if (typeof error !== "object") return false;
     if (error === null) return false;
-    if (typeof (error as MaybeError).title !== "string") return false;
-    if (typeof (error as MaybeError).description !== "string") return false;
+
+    if (!("title" in error)) return false;
+    if (!("description" in error)) return false;
+
+    if (typeof error.title !== "string") return false;
+    if (typeof error.description !== "string") return false;
+
     return true;
 }
 
@@ -19,7 +30,7 @@ export function isAbortError(error: unknown): boolean {
     return error instanceof Error && error.name === "AbortError";
 }
 
-export function isRateLimitError(response: Response | undefined): number | null {
+export function parseRateLimitHeader(response: Response | undefined): number | null {
     if (response?.status !== 429) return null;
 
     const headerValue = response.headers.get("ratelimit");
@@ -77,7 +88,7 @@ export function parseError(error: unknown): SiteErrorObject {
     throw error;
 }
 
-export function parseStatus(response: Response | undefined): ApiResponseData | null {
+export function parseResponseStatus(response: Response | undefined): NonOkResponseData | null {
     if (response === undefined) {
         return null;
     }

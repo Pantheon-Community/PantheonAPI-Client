@@ -1,4 +1,4 @@
-.not-found-page {
+section.not-found-page {
     display: flex;
     flex-direction: column;
 
@@ -8,7 +8,7 @@
         overflow: hidden;
     }
 
-    .lazy-image > img {
+    > img {
         width: 100%;
         height: 100%;
         object-fit: contain;

@@ -1,30 +1,43 @@
-import { RateLimitedDialog } from "@/components/Dialogs/RateLimitedDialog";
+import { RateLimitedDialog } from "@/components/Dialogs/RateLimitedDialog/RateLimitedDialog";
+import { BROWSER_STATE } from "@/constants/browserState";
+import type { PantheonErrorData } from "@/types/PantheonErrorData";
+import { notImplementedFunction } from "@/utils/notImplementedFn";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useSettings } from "../Settings/SettingsContext";
-import { notImplementedFunction, notImplementedFunctionAsync } from "../utils";
-import type { ApiErrorData } from "./ApiErrorData";
-import type { ExtraInit, PantheonApi } from "./PantheonApi";
-import { isAbortError, isRateLimitError, parseError, parseStatus } from "./pantheonApiHelpers";
+import type { PantheonApi, RequestFlags } from "./PantheonApi";
+import {
+    isAbortError,
+    makeLoginLink,
+    parseError,
+    parseRateLimitHeader,
+    parseResponseStatus,
+} from "./pantheonApiHelpers";
 
 const PantheonApiContext = createContext<PantheonApi>({
+    loginUrl: "",
     isRateLimited: false,
     latestError: null,
-    handleErrorClose: notImplementedFunction,
-    makeRequest: notImplementedFunctionAsync,
-    makeJsonRequest: notImplementedFunctionAsync,
-    makeTextRequest: notImplementedFunctionAsync,
+    makeRequest: notImplementedFunction,
+    makeJsonRequest: notImplementedFunction,
+    makeTextRequest: notImplementedFunction,
 });
 
 export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { serverUrl } = useSettings();
+    const { discordClientId, redirectUri, serverUrl } = useSettings();
+
+    const loginUrl = useMemo(() => {
+        return makeLoginLink(discordClientId, redirectUri, BROWSER_STATE);
+    }, [redirectUri, discordClientId]);
 
     const [rateLimitEndsAt, setRateLimitEndsAt] = useState<number | null>(null);
 
-    const [latestError, setLatestError] = useState<ApiErrorData | null>(null);
+    const [latestError, setLatestError] = useState<PantheonErrorData | null>(null);
 
     const isRateLimited = useMemo(() => rateLimitEndsAt !== null, [rateLimitEndsAt]);
 
     useEffect(() => {
+        // clear rate limited status after it expires
+
         if (rateLimitEndsAt === null) return;
 
         if (rateLimitEndsAt < Date.now()) {
@@ -40,10 +53,8 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [rateLimitEndsAt]);
 
     const makeRequestInternal = useCallback(
-        async (path: string, init: RequestInit | undefined, extraInit: ExtraInit | undefined) => {
-            if (rateLimitEndsAt !== null) {
-                return null;
-            }
+        async (path: string, init: RequestInit | undefined, flags: RequestFlags | undefined) => {
+            if (isRateLimited) return null;
 
             let response: Response | undefined;
 
@@ -66,37 +77,38 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
                 throw new Error("Received an unexpected response that could not be parsed.");
             } catch (error) {
-                const asRateLimit = isRateLimitError(response);
+                const rateLimitTimeRemaining = parseRateLimitHeader(response);
 
-                if (asRateLimit !== null) {
-                    setRateLimitEndsAt(Date.now() + 1000 * asRateLimit);
+                if (rateLimitTimeRemaining !== null) {
+                    setRateLimitEndsAt(Date.now() + 1000 * rateLimitTimeRemaining);
                 } else if (!isAbortError(error)) {
                     console.error(error);
 
                     setLatestError({
                         error: parseError(error),
-                        status: parseStatus(response),
-                        isAuthRelated: extraInit?.isAuthRelated === true,
+                        status: parseResponseStatus(response),
+                        suggestLogout: flags?.isAuthRelated === true,
+                        close: () => setLatestError(null),
                     });
                 }
 
                 return null;
             }
         },
-        [rateLimitEndsAt, serverUrl],
+        [serverUrl, isRateLimited],
     );
 
     const makeRequest = useCallback(
-        async (path: string, init?: RequestInit, extra?: ExtraInit): Promise<boolean> => {
-            const result = await makeRequestInternal(path, init, extra);
+        async (path: string, init?: RequestInit, flags?: RequestFlags): Promise<boolean> => {
+            const result = await makeRequestInternal(path, init, flags);
             return result !== null;
         },
         [makeRequestInternal],
     );
 
     const makeJsonRequest = useCallback(
-        async <T,>(path: string, init?: RequestInit, extra?: ExtraInit): Promise<T | null> => {
-            const result = await makeRequestInternal(path, init, extra);
+        async <T,>(path: string, init?: RequestInit, flags?: RequestFlags): Promise<T | null> => {
+            const result = await makeRequestInternal(path, init, flags);
 
             if (result === null) return null;
 
@@ -106,8 +118,8 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
     );
 
     const makeTextRequest = useCallback(
-        async (path: string, init?: RequestInit, extra?: ExtraInit): Promise<string | null> => {
-            const result = await makeRequestInternal(path, init, extra);
+        async (path: string, init?: RequestInit, flags?: RequestFlags): Promise<string | null> => {
+            const result = await makeRequestInternal(path, init, flags);
 
             if (result === null) return null;
 
@@ -116,27 +128,19 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
         [makeRequestInternal],
     );
 
-    const handleErrorClose = useCallback(() => setLatestError(null), []);
-
     const handleRateLimitedClose = useCallback(() => setRateLimitEndsAt(null), []);
 
     const value = useMemo<PantheonApi>(() => {
         return {
+            loginUrl,
             isRateLimited,
             latestError,
-            handleErrorClose,
+            setLatestError,
             makeRequest,
             makeJsonRequest,
             makeTextRequest,
         };
-    }, [
-        isRateLimited,
-        makeRequest,
-        makeTextRequest,
-        makeJsonRequest,
-        latestError,
-        handleErrorClose,
-    ]);
+    }, [isRateLimited, makeRequest, makeTextRequest, makeJsonRequest, latestError, loginUrl]);
 
     return (
         <PantheonApiContext.Provider value={value}>

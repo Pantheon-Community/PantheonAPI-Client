@@ -1,5 +1,5 @@
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
-import { InternalLink } from "../Links/InternalLink";
+import { InternalLink } from "../Links/InternalLink/InternalLink";
 import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import "./Sidebar.css";
 
@@ -29,6 +29,8 @@ export const Sidebar: React.FC = () => {
                 )}
 
                 <InternalLink href="/settings">Settings</InternalLink>
+
+                <InternalLink href="/components">Components</InternalLink>
             </nav>
         </div>
     );

@@ -1,5 +1,6 @@
-import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
-import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import { CopyTextButton } from "@/components/Buttons/CopyTextButton/CopyTextButton";
+import { BROWSER_STATE } from "@/constants/browserState";
+import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
 import type { Settings } from "@/contexts/Settings/Settings";
 import { useSettingsFull } from "@/contexts/Settings/SettingsContext";
 import { defaultSettings } from "@/contexts/Settings/settingsDefaults";
@@ -13,7 +14,8 @@ type NumberKey = { [K in keyof Settings]: Settings[K] extends number ? K : never
 
 export const SettingsPage: React.FC = () => {
     const { settings, setValue, resetValue } = useSettingsFull();
-    const { state, oAuthLink } = useBrowserSession();
+
+    const { loginUrl } = usePantheonApi();
 
     const makeTextChangeHandler = useCallback(
         <K extends StringKey>(key: K) => {
@@ -187,44 +189,6 @@ export const SettingsPage: React.FC = () => {
                         Currently <b>{duration(Date.now() + settings.minRefreshSeconds * 1000)}</b>.
                     </p>
                 </div>
-
-                <div>
-                    <label>
-                        <p>Cache Retention Period</p>
-
-                        <input
-                            value={settings.cacheRetentionPeriodHours.toString()}
-                            onChange={makeNumberChangeHandler("cacheRetentionPeriodHours")}
-                            inputMode="numeric"
-                        />
-                    </label>
-
-                    <div className="button-container">
-                        <button
-                            type="reset"
-                            disabled={
-                                settings.cacheRetentionPeriodHours ===
-                                defaultSettings.cacheRetentionPeriodHours
-                            }
-                            onClick={makeResetHandler("cacheRetentionPeriodHours")}
-                        >
-                            Reset
-                        </button>
-                    </div>
-
-                    <p>
-                        Cached data will be evicted once at least this many hours have passed since
-                        it was inserted.
-                        <br />
-                        Currently{" "}
-                        <b>
-                            {duration(
-                                Date.now() + settings.cacheRetentionPeriodHours * 60 * 60 * 1000,
-                            )}
-                        </b>
-                        .
-                    </p>
-                </div>
             </div>
 
             <h3>Advanced Stuff</h3>
@@ -233,13 +197,13 @@ export const SettingsPage: React.FC = () => {
                 <p>
                     <span>OAuth Link</span>
 
-                    <CopyTextButton text={oAuthLink} />
+                    <CopyTextButton text={loginUrl} />
                 </p>
 
-                <pre>{oAuthLink}</pre>
+                <pre>{loginUrl}</pre>
 
                 <p>State</p>
-                <pre>{state}</pre>
+                <pre>{BROWSER_STATE}</pre>
             </div>
         </section>
     );

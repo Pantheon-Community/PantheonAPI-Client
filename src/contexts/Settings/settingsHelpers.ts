@@ -1,8 +1,8 @@
-import { baseKey } from "../utils";
+import { BASE_STORAGE_KEY } from "@/constants/baseStorageKey";
 import type { Settings } from "./Settings";
 import { defaultSettings } from "./settingsDefaults";
 
-const KEY = `${baseKey}.settings`;
+const KEY = `${BASE_STORAGE_KEY}.settings` as const;
 
 export function getStoredSettings(): Settings {
     const existing = localStorage.getItem(KEY);

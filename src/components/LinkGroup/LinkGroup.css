@@ -4,7 +4,8 @@
     border-radius: var(--rounded-extra);
 
     > a {
-        padding: 0.25em 0.5em;
+        white-space: nowrap;
+        padding: 0.5em 1em;
         border-radius: var(--rounded-extra);
 
         &.selected {

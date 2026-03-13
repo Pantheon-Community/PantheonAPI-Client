@@ -1,6 +1,6 @@
-import { CopyTextButton } from "@/components/Buttons/CopyTextButton";
-import { LoginButton } from "@/components/Buttons/LoginButton";
-import { ExternalLink } from "@/components/Links/ExternalLink";
+import { CopyTextButton } from "@/components/Buttons/CopyTextButton/CopyTextButton";
+import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
+import { ExternalLink } from "@/components/Links/ExternalLink/ExternalLink";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import "./HomePage.css";
 

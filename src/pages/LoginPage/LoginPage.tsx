@@ -1,11 +1,12 @@
-import { LoginButton } from "@/components/Buttons/LoginButton";
-import { LogoutButton } from "@/components/Buttons/LogoutButton";
-import { InternalLink } from "@/components/Links/InternalLink";
-import { useBrowserSession } from "@/contexts/BrowserSession/BrowserSessionContext";
+import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
+import { LogoutButton } from "@/components/Buttons/LogoutButton/LogoutButton";
+import { InternalLink } from "@/components/Links/InternalLink/InternalLink";
+import { BROWSER_STATE } from "@/constants/browserState";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import "./LoginPage.css";
+import { LoginInvalidState } from "./SubPages/LoginInvalidState";
 
 enum LoginState {
     Init,
@@ -14,7 +15,7 @@ enum LoginState {
 
     NoCode,
 
-    CrossSiteRequestForgery,
+    InvalidState,
 
     Redirecting,
 
@@ -22,7 +23,6 @@ enum LoginState {
 }
 
 export const LoginPage: React.FC = () => {
-    const { state } = useBrowserSession();
     const { currentUser, login } = useCurrentUser();
 
     const [searchParams] = useSearchParams();
@@ -49,8 +49,8 @@ export const LoginPage: React.FC = () => {
 
         const receivedState = searchParams.get("state");
 
-        if (receivedState === null || receivedState !== state) {
-            setLoginState(LoginState.CrossSiteRequestForgery);
+        if (receivedState === null || receivedState !== BROWSER_STATE) {
+            setLoginState(LoginState.InvalidState);
             return;
         }
 
@@ -64,7 +64,11 @@ export const LoginPage: React.FC = () => {
         });
 
         return () => controller.abort();
-    }, [currentUser, login, loginState, navigate, searchParams, state]);
+    }, [currentUser, login, loginState, navigate, searchParams]);
+
+    if (loginState === LoginState.InvalidState) {
+        return <LoginInvalidState />;
+    }
 
     return (
         <section className="login-page">
@@ -91,16 +95,6 @@ export const LoginPage: React.FC = () => {
                     <p>What are you waiting for?</p>
 
                     <LoginButton />
-                </>
-            )}
-
-            {loginState === LoginState.CrossSiteRequestForgery && (
-                <>
-                    <p className="uh-oh">CSRF Detected</p>
-
-                    <p>
-                        Your login request may have been intercepted, are you on a secure network?
-                    </p>
                 </>
             )}
 

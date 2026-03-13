@@ -1,4 +1,5 @@
 import type { DiscordId } from "@/shared/types/Common";
+import type { SiteImageData } from "@/types/SiteImageData";
 import { useMemo } from "react";
 import { LazyImage } from "../LazyImage/LazyImage";
 import "./ProfilePicture.css";
@@ -13,7 +14,7 @@ interface ProfilePictureProps {
     size: number;
 }
 
-function getDefaultAvatar(id: DiscordId): string {
+function getDefaultAvatar(id: DiscordId): SiteImageData {
     // How discord calculates default avatar.
     // https://docs.discord.com/developers/reference#:~:text=%2A%2A,-In
     // Haven't actually verified this returns the correct default avatar, but it returns AN avatar
@@ -21,29 +22,35 @@ function getDefaultAvatar(id: DiscordId): string {
 
     const defaultId = Math.abs(Number(id) >> 22) % 6;
 
-    return `https://cdn.discordapp.com/embed/avatars/${defaultId}.png`;
+    return {
+        src: `https://cdn.discordapp.com/embed/avatars/${defaultId}.png`,
+        alt: "Default Discord avatar",
+    };
 }
 
 export const ProfilePicture: React.FC<ProfilePictureProps> = ({ id, username, avatar, size }) => {
-    const fallbackSrc = useMemo(() => getDefaultAvatar(id), [id]);
+    const fallback = useMemo(() => getDefaultAvatar(id), [id]);
 
-    const primarySrc = useMemo(() => {
+    const primary = useMemo<SiteImageData | null>(() => {
         if (avatar === null) {
-            return fallbackSrc;
+            return null;
         }
 
-        return `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=${size * 2}`;
-    }, [avatar, id, size, fallbackSrc]);
+        return {
+            src: `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=${size * 2}`,
+            alt: `Discord avatar of ${username}`,
+        };
+    }, [username, avatar, id, size]);
+
+    const style = useMemo(() => ({ "--size": `${size}px` }) as React.CSSProperties, [size]);
 
     return (
         <LazyImage
+            primary={primary}
+            fallback={fallback}
             className="profile-picture"
-            primarySrc={primarySrc}
-            fallbackSrc={fallbackSrc}
-            alt={`Discord profile of ${username}`}
-            width={size}
-            height={size}
-            title={username}
+            title={`Discord avatar of ${username}`}
+            style={style}
         />
     );
 };
