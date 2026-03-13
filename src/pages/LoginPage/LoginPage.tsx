@@ -1,12 +1,11 @@
-import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
-import { LogoutButton } from "@/components/Buttons/LogoutButton/LogoutButton";
-import { InternalLink } from "@/components/Links/InternalLink/InternalLink";
 import { BROWSER_STATE } from "@/constants/browserState";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
-import "./LoginPage.css";
+import { useSearchParams } from "react-router";
+import { LoginAlreadyLoggedIn } from "./SubPages/LoginAlreadyLoggedIn";
 import { LoginInvalidState } from "./SubPages/LoginInvalidState";
+import { LoginNoCode } from "./SubPages/LoginNoCode";
+import { LoginRedirecting } from "./SubPages/LoginRedirecting";
 
 enum LoginState {
     Init,
@@ -26,8 +25,6 @@ export const LoginPage: React.FC = () => {
     const { currentUser, login } = useCurrentUser();
 
     const [searchParams] = useSearchParams();
-
-    const navigate = useNavigate();
 
     const [loginState, setLoginState] = useState(LoginState.Init);
 
@@ -60,55 +57,35 @@ export const LoginPage: React.FC = () => {
 
         void login(code).then(async () => {
             setLoginState(LoginState.Redirecting);
-            await navigate("/");
         });
 
         return () => controller.abort();
-    }, [currentUser, login, loginState, navigate, searchParams]);
+    }, [currentUser, login, loginState, searchParams]);
 
-    if (loginState === LoginState.InvalidState) {
-        return <LoginInvalidState />;
+    switch (loginState) {
+        case LoginState.InvalidState:
+            return <LoginInvalidState />;
+        case LoginState.AlreadyLoggedIn:
+            return <LoginAlreadyLoggedIn />;
+        case LoginState.NoCode:
+            return <LoginNoCode />;
+        case LoginState.Init:
+            return (
+                <section>
+                    <h1>Logging In</h1>
+
+                    <p>Initialising...</p>
+                </section>
+            );
+        case LoginState.Fetching:
+            return (
+                <section>
+                    <h1>Logging In</h1>
+
+                    <p>Creating session...</p>
+                </section>
+            );
+        case LoginState.Redirecting:
+            return <LoginRedirecting />;
     }
-
-    return (
-        <section className="login-page">
-            <h1>Log In</h1>
-
-            {currentUser !== null && (
-                <>
-                    <p>
-                        You're already logged in as <b>{currentUser.user.username}</b>, silly!
-                    </p>
-
-                    <InternalLink href="/profile">
-                        <button type="button" className="go-to-profile-button">
-                            View Profile
-                        </button>
-                    </InternalLink>
-
-                    <LogoutButton />
-                </>
-            )}
-
-            {loginState === LoginState.NoCode && (
-                <>
-                    <p>What are you waiting for?</p>
-
-                    <LoginButton />
-                </>
-            )}
-
-            {(loginState === LoginState.Init ||
-                loginState === LoginState.Fetching ||
-                loginState === LoginState.Redirecting) && <p>Logging you in...</p>}
-
-            {currentUser === null && loginState === LoginState.AlreadyLoggedIn && (
-                <>
-                    <p>Well, you got what you wanted.</p>
-
-                    <LoginButton />
-                </>
-            )}
-        </section>
-    );
 };
