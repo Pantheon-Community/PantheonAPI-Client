@@ -5,6 +5,7 @@
     column-gap: 1em;
     background-color: var(--bg-half-secondary);
     border-radius: var(--rounded-extra);
+    border: solid 2px var(--border-half-main);
     padding: 0.5em;
     position: relative;
     width: fit-content;

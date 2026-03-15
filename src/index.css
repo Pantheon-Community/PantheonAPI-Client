@@ -10,6 +10,7 @@
     --bg-bad: color-mix(in oklab, var(--bg-main) 25%, var(--text-bad));
     /* Borders */
     --border-main: oklch(65% 0 0);
+    --border-half-main: oklch(30% 0 0);
     /* Text */
     --text-main: oklch(95% 0 0);
     --text-secondary: oklch(65% 0 0);

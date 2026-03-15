@@ -1,7 +1,7 @@
 import { BROWSER_STATE } from "@/constants/browserState";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { LoginAlreadyLoggedIn } from "./SubPages/LoginAlreadyLoggedIn";
 import { LoginInvalidState } from "./SubPages/LoginInvalidState";
 import { LoginNoCode } from "./SubPages/LoginNoCode";
@@ -22,6 +22,8 @@ enum LoginState {
 }
 
 export const LoginPage: React.FC = () => {
+    const navigate = useNavigate();
+
     const { currentUser, login } = useCurrentUser();
 
     const [searchParams] = useSearchParams();
@@ -55,12 +57,16 @@ export const LoginPage: React.FC = () => {
 
         setLoginState(LoginState.Fetching);
 
-        void login(code).then(async () => {
-            setLoginState(LoginState.Redirecting);
+        void login(code).then(async (wasSuccessful) => {
+            if (wasSuccessful) {
+                setLoginState(LoginState.Redirecting);
+            } else {
+                void navigate("/");
+            }
         });
 
         return () => controller.abort();
-    }, [currentUser, login, loginState, searchParams]);
+    }, [currentUser, login, loginState, searchParams, navigate]);
 
     switch (loginState) {
         case LoginState.InvalidState:

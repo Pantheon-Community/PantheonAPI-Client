@@ -21,7 +21,7 @@ interface CurrentUserContextType {
 
     setCurrentUser: React.Dispatch<React.SetStateAction<AuthResponse | null>>;
 
-    login(code: string): Promise<void>;
+    login(code: string): Promise<boolean>;
 
     logout(): Promise<void>;
 
@@ -56,7 +56,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const login = useCallback(
         async (code: string) => {
-            if (isDoingSomething.current) return;
+            if (isDoingSomething.current) return false;
             isDoingSomething.current = true;
 
             const response = await makeJsonRequest<AuthResponse>(
@@ -73,7 +73,10 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
             if (response !== null) {
                 setCurrentUser(response);
+                return true;
             }
+
+            return false;
         },
         [makeJsonRequest, redirectUri],
     );

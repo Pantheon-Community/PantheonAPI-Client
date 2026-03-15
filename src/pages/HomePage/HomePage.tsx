@@ -3,6 +3,7 @@ import { LoginButton } from "@/components/Buttons/LoginButton/LoginButton";
 import { ExternalLink } from "@/components/Links/ExternalLink/ExternalLink";
 import { InlineExternalLink } from "@/components/Links/InlineExternalLink/InlineExternalLink";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import { useSettings } from "@/contexts/Settings/SettingsContext";
 import "./HomePage.css";
 
 const NavItem: React.FC<{ href: string; children: string }> = ({ href, children }) => (
@@ -16,6 +17,8 @@ const NavItem: React.FC<{ href: string; children: string }> = ({ href, children 
 );
 
 export const HomePage: React.FC = () => {
+    const { serverUrl } = useSettings();
+
     const { currentUser } = useCurrentUser();
 
     return (
@@ -36,7 +39,7 @@ export const HomePage: React.FC = () => {
             <nav>
                 <NavItem href="https://pantheoncommunity.org">Main Website</NavItem>
 
-                <NavItem href="https://api.pantheoncommunity.org">Pantheon API</NavItem>
+                <NavItem href={serverUrl}>Pantheon API</NavItem>
 
                 <NavItem href="https://github.com/Pantheon-Community/PantheonAPI">
                     Pantheon API (Github)

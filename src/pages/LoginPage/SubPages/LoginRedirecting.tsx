@@ -1,5 +1,5 @@
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 export const LoginRedirecting: React.FC = () => {
@@ -7,21 +7,11 @@ export const LoginRedirecting: React.FC = () => {
 
     const { currentUser } = useCurrentUser();
 
-    const [secondsTillLeave, setSecondsTillLeave] = useState(3);
-
     useEffect(() => {
-        if (currentUser?.user.id === null) return;
+        if (currentUser === null) return;
 
-        const interval = setInterval(() => setSecondsTillLeave((prev) => prev - 1), 1000);
-
-        return () => clearInterval(interval);
-    }, [currentUser?.user.id]);
-
-    useEffect(() => {
-        if (secondsTillLeave <= 0) {
-            void navigate("/");
-        }
-    }, [secondsTillLeave, navigate]);
+        void navigate("/");
+    }, [currentUser, navigate]);
 
     return (
         <section>
@@ -33,13 +23,7 @@ export const LoginRedirecting: React.FC = () => {
                         Successfully logged in as <b>{currentUser.user.username}</b>.
                     </p>
 
-                    <p>
-                        Redirecting you to the homepage in{" "}
-                        <b>
-                            {secondsTillLeave} second{secondsTillLeave !== 1 ? "s" : ""}
-                        </b>
-                        .
-                    </p>
+                    <p>Redirecting you to the homepage...</p>
                 </>
             ) : (
                 <p>Initialising session...</p>

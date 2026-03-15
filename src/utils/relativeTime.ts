@@ -114,3 +114,57 @@ export function duration(a: number, b: number = Date.now(), join = " and "): str
 
     return yearsStr;
 }
+
+export function durationShort(a: number, b: number = Date.now()): string {
+    const seconds = Math.floor(Math.abs(a - b) / 1000);
+
+    // less than a minute
+
+    if (seconds < 60) {
+        return toSeconds(seconds);
+    }
+
+    // less than an hour
+
+    const minutes = Math.floor(seconds / 60);
+
+    if (minutes < 60) {
+        return toMinutes(minutes);
+    }
+
+    // less than a day
+
+    const hours = Math.floor(minutes / 60);
+
+    if (hours < 24) {
+        return toHours(hours);
+    }
+
+    // less than a week
+
+    const days = Math.floor(hours / 24);
+
+    if (days < 7) {
+        return toDays(days);
+    }
+
+    // less than a month (approx. 4 weeks)
+
+    const weeks = Math.floor(days / 7);
+
+    if (weeks <= 4) {
+        return toWeeks(weeks);
+    }
+
+    // less than a year (with a month being approx. 30 days)
+
+    const months = Math.floor(days / 30);
+
+    if (months < 12) {
+        return toMonths(months);
+    }
+
+    // X years
+
+    return toYears(Math.floor(months / 12));
+}
