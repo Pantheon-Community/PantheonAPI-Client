@@ -1,12 +1,13 @@
 .sidebar {
     background-color: rgba(64, 64, 64, 0.4);
     backdrop-filter: blur(8px);
-    padding-block: 1rem;
+    padding-block: 0.5rem;
+    padding-bottom: 0;
     white-space: nowrap;
 
     > h4 {
         padding-inline: 1rem;
-        padding-bottom: 1rem;
+        padding-bottom: 0.5rem;
         text-align: center;
     }
 

@@ -8,7 +8,7 @@ export const Sidebar: React.FC = () => {
 
     return (
         <div className="sidebar">
-            <h4>Pantheon API Client</h4>
+            <h4>Pantheon Dev</h4>
 
             <nav>
                 <InternalLink href="/">Home</InternalLink>
