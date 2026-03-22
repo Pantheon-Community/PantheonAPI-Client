@@ -24,8 +24,8 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v6
               with:
-                submodules: recursive
-                token: ${{ secrets.PANTHEON_API_PAT }}
+                  submodules: recursive
+                  token: ${{ secrets.PANTHEON_API_PAT }}
 
             - name: Install Bun
               uses: oven-sh/setup-bun@v2
@@ -39,7 +39,7 @@ jobs:
             - name: Deploy to Cloudflare Pages
               uses: cloudflare/wrangler-action@v3
               with:
-                apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-                command: pages deploy dist/ --project-name=pantheon-api-client
-                githubToken: ${{ secrets.GITHUB_TOKEN }}
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: pages deploy dist/ --project-name=pantheon-dev-client
+                  githubToken: ${{ secrets.GITHUB_TOKEN }}
