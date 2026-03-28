@@ -34,7 +34,7 @@
             grid-column: span 2;
         }
 
-        > .steam-user-card {
+        > .steam-user-card, > .session-card {
             grid-column: span 2;
         }
     }

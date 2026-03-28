@@ -13,11 +13,13 @@ import { ExternalLink } from "@/components/Links/ExternalLink/ExternalLink";
 import { InlineExternalLink } from "@/components/Links/InlineExternalLink/InlineExternalLink";
 import { InternalLink } from "@/components/Links/InternalLink/InternalLink";
 import { ProfilePicture } from "@/components/ProfilePicture/ProfilePicture";
+import { SessionCard } from "@/components/SessionCard/SessionCard";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { SteamUserCard } from "@/components/SteamUserCard/SteamUserCard";
 import { BackgroundImage } from "@/images/Background";
-import type { DiscordId } from "@/shared/types/Common";
+import type { DiscordId, Ip, Origin, UserAgent } from "@/shared/types/Common";
 import type { SteamId64, SteamUserWithTimes } from "@/shared/types/SteamUser";
+import type { UserSessionBasic, UserSessionId } from "@/shared/types/UserSession";
 import { useCallback, useMemo, useState } from "react";
 import "./ComponentsPage.css";
 
@@ -66,6 +68,15 @@ const steamUserB: SteamUserWithTimes = {
         lastSeenAt: new Date().toISOString(),
         timesSeen: 0,
     },
+};
+
+const session: UserSessionBasic = {
+    id: 123 as UserSessionId,
+    startedAt: new Date().toISOString(),
+    ip: "123.123.123.123" as Ip,
+    userAgent: navigator.userAgent as UserAgent,
+    origin: window.origin as Origin,
+    lastActionAt: new Date().toISOString(),
 };
 
 export const ComponentsPage: React.FC = () => {
@@ -246,6 +257,8 @@ export const ComponentsPage: React.FC = () => {
                 <SteamUserCard user={steamUserA} isPrimary />
 
                 <SteamUserCard user={steamUserB} />
+
+                <SessionCard session={session} />
             </div>
         </section>
     );
