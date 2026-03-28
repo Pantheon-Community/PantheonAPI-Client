@@ -3,7 +3,7 @@ import { SteamUserCard } from "@/components/SteamUserCard/SteamUserCard";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
-import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
+import type { SteamUserWithTimes } from "@/shared/types/SteamUser";
 import { useCallback } from "react";
 import "./ProfileConnections.css";
 
@@ -16,7 +16,7 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
     const connections = currentUser.steamUsers;
 
     const makeSelectHandler = useCallback(
-        (steam: SteamUserBasicWithTimes) => {
+        (steam: SteamUserWithTimes) => {
             return async () => {
                 const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
                     method: "put",
@@ -49,15 +49,12 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
     }, [currentUser.token, setCurrentUser, makeRequest]);
 
     const refreshUserConnections = useCallback(async () => {
-        const response = await makeJsonRequest<SteamUserBasicWithTimes[]>(
-            "/users/@me/steam-users",
-            {
-                headers: {
-                    authorization: `Bearer ${currentUser.token}`,
-                    accept: "application/json",
-                },
+        const response = await makeJsonRequest<SteamUserWithTimes[]>("/users/@me/steam-users", {
+            headers: {
+                authorization: `Bearer ${currentUser.token}`,
+                accept: "application/json",
             },
-        );
+        });
 
         if (response !== null) {
             setCurrentUser((prev) => {

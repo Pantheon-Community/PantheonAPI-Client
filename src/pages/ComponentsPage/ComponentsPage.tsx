@@ -16,8 +16,8 @@ import { ProfilePicture } from "@/components/ProfilePicture/ProfilePicture";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { SteamUserCard } from "@/components/SteamUserCard/SteamUserCard";
 import { BackgroundImage } from "@/images/Background";
-import type { DiscordId, SteamId64 } from "@/shared/types/Common";
-import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
+import type { DiscordId } from "@/shared/types/Common";
+import type { SteamId64, SteamUserWithTimes } from "@/shared/types/SteamUser";
 import { useCallback, useMemo, useState } from "react";
 import "./ComponentsPage.css";
 
@@ -42,24 +42,30 @@ async function statefulAction(): Promise<void> {
 
 const json = { foo: "bar", hello: 123, eio: true };
 
-const steamUserA: SteamUserBasicWithTimes = {
+const steamUserA: SteamUserWithTimes = {
     id: "76561198200316171" as SteamId64,
     username: "NachoToast",
     avatar: "https://avatars.fastly.steamstatic.com/d789a47289ccb8c36eea2055a9b700e7718c6fac_full.jpg",
     location: "New Zealand",
     memberSince: new Date().toISOString(),
-    firstSeenAt: null,
-    lastSeenAt: null,
+    analytics: {
+        firstSeenAt: new Date().toISOString(),
+        lastSeenAt: new Date().toISOString(),
+        timesSeen: 0,
+    },
 };
 
-const steamUserB: SteamUserBasicWithTimes = {
+const steamUserB: SteamUserWithTimes = {
     id: "76561198200316171" as SteamId64,
     username: "NachoToast",
     avatar: null,
     location: "Australia",
     memberSince: new Date(0).toISOString(),
-    firstSeenAt: new Date(0).toISOString(),
-    lastSeenAt: new Date().toISOString(),
+    analytics: {
+        firstSeenAt: new Date(0).toISOString(),
+        lastSeenAt: new Date().toISOString(),
+        timesSeen: 0,
+    },
 };
 
 export const ComponentsPage: React.FC = () => {

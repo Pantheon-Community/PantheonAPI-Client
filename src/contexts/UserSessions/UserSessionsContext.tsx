@@ -1,7 +1,6 @@
 import { BASE_STORAGE_KEY } from "@/constants/baseStorageKey";
 import { useSessionStorage } from "@/hooks/useSessionStorage";
-import type { UserSessionId } from "@/shared/types/Common";
-import type { UserSessionBasic } from "@/shared/types/UserSession";
+import type { UserSessionBasic, UserSessionId } from "@/shared/types/UserSession";
 import { notImplementedFunction } from "@/utils/notImplementedFn";
 import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { useCurrentUser } from "../CurrentUser/CurrentUserContext";

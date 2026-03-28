@@ -1,5 +1,5 @@
 import { SteamImage } from "@/images/Steam";
-import type { SteamUserBasicWithTimes } from "@/shared/types/SteamUser";
+import type { SteamUserWithTimes } from "@/shared/types/SteamUser";
 import type { SiteImageData } from "@/types/SiteImageData";
 import { useMemo } from "react";
 import { StatefulButton } from "../Buttons/StatefulButton/StatefulButton";
@@ -7,7 +7,7 @@ import { LazyImage } from "../LazyImage/LazyImage";
 import "./SteamUserCard.css";
 
 interface SteamUserCardProps {
-    user: SteamUserBasicWithTimes;
+    user: SteamUserWithTimes;
 
     isPrimary?: boolean;
 
