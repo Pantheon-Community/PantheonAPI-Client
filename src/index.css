@@ -199,6 +199,11 @@ dialog {
     }
 }
 
+ul {
+    padding: 0;
+    margin: 0;
+}
+
 @keyframes grow {
     from {
         scale: 0%;

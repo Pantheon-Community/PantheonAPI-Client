@@ -38,4 +38,17 @@
     > details {
         width: fit-content;
     }
+
+    > .roles {
+        > h4 {
+            display: flex;
+            gap: 1em;
+            align-items: flex-end;
+        }
+
+        > ul {
+            margin-left: 1em;
+            margin-top: 0.5em;
+        }
+    }
 }

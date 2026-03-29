@@ -6,6 +6,7 @@ import { Details } from "@/components/Details/Details";
 import { ProfilePicture } from "@/components/ProfilePicture/ProfilePicture";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
+import { usePermissions } from "@/contexts/Permissions/PermissionsContext";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
 import type { GetMeResponse } from "@/shared/types/Responses/GetMeResponse";
 import { useCallback } from "react";
@@ -13,8 +14,8 @@ import "./ProfileDetails.css";
 
 export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ currentUser }) => {
     const { makeJsonRequest } = usePantheonApi();
-
     const { setCurrentUser } = useCurrentUser();
+    const { roles, refetchRoles } = usePermissions();
 
     const refreshUser = useCallback(async () => {
         const response = await makeJsonRequest<GetMeResponse>("/users/@me", {
@@ -61,6 +62,31 @@ export const ProfileDetails: React.FC<{ currentUser: AuthResponse }> = ({ curren
                         textDone="Refreshed!"
                     />
                 </div>
+            </div>
+
+            <div className="roles">
+                <h4>
+                    <span>Roles ({roles.length.toLocaleString()})</span>
+
+                    <StatefulButton
+                        onClick={refetchRoles}
+                        textDo="Refresh"
+                        textDoing="Refreshing..."
+                        textDone="Refreshed!"
+                    />
+                </h4>
+
+                {roles.length === 0 ? (
+                    <div>
+                        <i>No roles found.</i>
+                    </div>
+                ) : (
+                    <ul>
+                        {roles.map((role) => (
+                            <li key={role.id}>{role.name}</li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <Details summaryWhenClosed="Show Raw Data" summaryWhenOpen="Hide Raw Data">

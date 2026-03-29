@@ -1,9 +1,10 @@
 import type { PermissionsObject } from "@/shared/types/Permissions/PermissionsObject";
-import type { Role, RoleLevel } from "@/shared/types/Role";
+import { type Role, type RoleId, type RoleLevel } from "@/shared/types/Role";
 import { flattenPermissions, hasPermission } from "@/shared/utils/PermissionHelpers";
 import { notImplementedFunction } from "@/utils/notImplementedFn";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useCurrentUser } from "../CurrentUser/CurrentUserContext";
+import { usePantheonApi } from "../PantheonApi/PantheonApiContext";
 import { useRoles } from "../Roles/RolesContext";
 
 interface PermissionsContextType {
@@ -12,18 +13,22 @@ interface PermissionsContextType {
     readonly roles: Role[];
 
     hasPermission(target: Partial<PermissionsObject>): boolean;
+
+    refetchRoles(): Promise<void>;
 }
 
 const PermissionsContext = createContext<PermissionsContextType>({
     level: flattenPermissions().highestRoleLevel,
     roles: [],
     hasPermission: notImplementedFunction,
+    refetchRoles: notImplementedFunction,
 });
 
 export const PermissionsContextProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const { currentUser } = useCurrentUser();
+    const { makeJsonRequest } = usePantheonApi();
+    const { currentUser, setCurrentUser } = useCurrentUser();
     const { roleMap } = useRoles();
 
     const roles = useMemo(() => {
@@ -45,13 +50,34 @@ export const PermissionsContextProvider: React.FC<{ children: React.ReactNode }>
         [flattenedPermissions],
     );
 
+    const refetchRoles = useCallback(async () => {
+        if (currentUser?.token === undefined) return;
+
+        const roleIds = await makeJsonRequest<RoleId[]>("/users/@me/roles", {
+            headers: {
+                authorization: `Bearer ${currentUser.token}`,
+                accept: "application/json",
+            },
+        });
+
+        if (roleIds !== null) {
+            setCurrentUser((prev) => {
+                if (prev === null) {
+                    return null;
+                }
+                return { ...prev, roleIds };
+            });
+        }
+    }, [makeJsonRequest, currentUser?.token, setCurrentUser]);
+
     const value = useMemo<PermissionsContextType>(
         () => ({
             level: flattenedPermissions.highestRoleLevel,
             roles,
             hasPermission: has,
+            refetchRoles,
         }),
-        [has, flattenedPermissions.highestRoleLevel, roles],
+        [has, flattenedPermissions.highestRoleLevel, roles, refetchRoles],
     );
 
     return <PermissionsContext.Provider value={value}>{children}</PermissionsContext.Provider>;
