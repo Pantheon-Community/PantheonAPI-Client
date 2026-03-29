@@ -3,6 +3,12 @@ import { InternalLink } from "../Links/InternalLink/InternalLink";
 import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import "./Sidebar.css";
 
+declare global {
+    interface Window {
+        GIT_COMMIT_HASH?: string;
+    }
+}
+
 export const Sidebar: React.FC = () => {
     const { currentUser } = useCurrentUser();
 
@@ -32,6 +38,12 @@ export const Sidebar: React.FC = () => {
 
                 <InternalLink href="/components">Components</InternalLink>
             </nav>
+
+            {!!window.GIT_COMMIT_HASH && (
+                <div className="version" title="Git Commit Hash">
+                    {window.GIT_COMMIT_HASH}
+                </div>
+            )}
         </div>
     );
 };

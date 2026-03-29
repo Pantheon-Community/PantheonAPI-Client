@@ -1,4 +1,6 @@
 .sidebar {
+    display: flex;
+    flex-direction: column;
     background-color: rgba(64, 64, 64, 0.4);
     backdrop-filter: blur(8px);
     padding-block: 0.5rem;
@@ -13,7 +15,8 @@
 
     nav {
         display: grid;
-        grid-auto-rows: 1fr;
+        grid-auto-rows: 40px;
+        flex-grow: 1;
 
         > a {
             padding: 0.25rem 0.75rem;
@@ -35,5 +38,11 @@
                 background-color: var(--bg-tertiary);
             }
         }
+    }
+
+    > .version {
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-align: center;
     }
 }
