@@ -1,0 +1,46 @@
+.permissions-list {
+    display: flex;
+    gap: 0.2em;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    position: relative;
+
+    > div {
+        display: flex;
+        border-radius: var(--half-rounded);
+        background-color: var(--bg-quarter-secondary);
+        border: solid 2px var(--border-half-main);
+        cursor: help;
+
+        > span {
+            padding: 0.2em 0.5em;
+        }
+
+        > button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        &.none {
+            padding: 0.2em 0.5em;
+            cursor: unset;
+            color: var(--text-secondary)
+        }
+
+        &:not(.none):hover {
+            background-color: var(--bg-secondary);
+        }
+    }
+
+    > .edit {
+        font: inherit;
+        align-self: flex-end;
+    }
+
+    .add-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        padding: 1em;
+    }
+}

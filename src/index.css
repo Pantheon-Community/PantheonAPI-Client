@@ -5,6 +5,7 @@
     --bg-half-secondary: oklch(25% 0 0);
     --bg-secondary: oklch(35% 0 0);
     --bg-tertiary: oklch(45% 0 0);
+    --bg-quaternary: oklch(55% 0 0);
     --bg-disabled: oklch(20% 0 0);
     --bg-discord: #5865f2;
     --bg-bad: color-mix(in oklab, var(--bg-main) 25%, var(--text-bad));
@@ -20,6 +21,7 @@
     --text-good: lightgreen;
     --text-link: rgb(144, 207, 228);
     /* Other */
+    --half-rounded: 0.1em;
     --rounded: 0.25em;
     --rounded-extra: 0.5em;
     --transition-duration: 100ms;
@@ -54,7 +56,7 @@ main {
     height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6, p, a, button, input, summary, dialog, div {
+h1, h2, h3, h4, h5, h6, p, a, button, input, summary, dialog, div, tr, td, th, li, label {
     transition: all ease-out var(--transition-duration);
 }
 
@@ -132,10 +134,6 @@ input {
         border-color: var(--border-main);
     }
 
-    &[type="text"] {
-        min-width: 320px;
-    }
-
     &[type="checkbox"] {
         margin: 0;
     }
@@ -194,6 +192,10 @@ dialog {
 
     &::backdrop {
         backdrop-filter: blur(12px);
+    }
+
+    &.wide {
+        max-width: 90%;
     }
 }
 

@@ -39,7 +39,7 @@ export const ErrorDialog: React.FC<{ errorData: PantheonErrorData }> = ({ errorD
     }, [description]);
 
     return (
-        <DialogBase title={title} onClose={close}>
+        <DialogBase title={title} isBad onClose={close}>
             {asHtml !== null ? (
                 <div className="error-dialog-html-display">
                     <pre>

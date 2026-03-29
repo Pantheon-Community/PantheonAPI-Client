@@ -1,0 +1,61 @@
+.detailed-permissions-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    padding-bottom: 1px;
+
+    > li {
+        > label {
+            border: solid 2px var(--border-half-main);
+            margin-bottom: -1px;
+            display: flex;
+            background-color: var(--bg-main);
+            align-items: center;
+            gap: 0.5em;
+            padding-left: 0.5em;
+
+            > span.description {
+                color: var(--text-secondary);
+                flex-grow: 1;
+                padding-block: 0.5em;
+            }
+
+            > span.value {
+                color: var(--text-tertiary);
+                padding: 0.5em;
+                background-color: color-mix(in srgb, var(--bg-quarter-secondary) 75%, transparent);
+            }
+
+            &:hover, &:focus-within {
+                background-color: var(--bg-half-secondary);
+            }
+        }
+
+        &:first-of-type > label {
+            border-top-left-radius: var(--rounded);
+            border-top-right-radius: var(--rounded);
+        }
+
+        &:last-of-type > label {
+            border-bottom-left-radius: var(--rounded);
+            border-bottom-right-radius: var(--rounded);
+        }
+    }
+
+    &.editable {
+        input {
+            display: unset;
+        }
+
+        label {
+            cursor: pointer;
+        }
+
+        li:hover > label, li:focus-within > label {
+            scale: 102%;
+            border-radius: var(--rounded);
+            z-index: 1;
+        }
+    }
+}

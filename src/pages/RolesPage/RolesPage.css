@@ -1,0 +1,47 @@
+.roles-page {
+    > table {
+        border-collapse: collapse;
+
+        td, th {
+            border: solid 1px var(--border-main);
+            padding: 0.5em;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        td.actions {
+            border: none;
+            display: flex;
+            gap: 1em;
+            flex-direction: column;
+        }
+
+        th.name {
+            min-width: 218px;
+        }
+
+        th.level {
+            min-width: 90px;
+        }
+
+        th.category {
+            min-width: 150px;
+        }
+
+        tr:nth-child(odd) {
+            > td:not(.actions) {
+                background-color: color-mix(in srgb, var(--bg-quarter-secondary) 75%, transparent);
+            }
+        }
+
+        tr:hover {
+            > td:not(.actions) {
+                background-color: var(--bg-half-secondary);
+            }
+        }
+
+        .permissions-list {
+            max-width: 600px;
+        }
+    }
+}

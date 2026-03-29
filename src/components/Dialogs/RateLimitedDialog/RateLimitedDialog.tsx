@@ -25,7 +25,7 @@ export const RateLimitedDialog: React.FC<RateLimitedDialogProps> = ({ endsAt, on
     }, [endsAt]);
 
     return (
-        <DialogBase title="Rate Limited" onClose={onClose}>
+        <DialogBase title="Rate Limited" isBad onClose={onClose}>
             <p>Too many requests being made to the API.</p>
 
             <p>

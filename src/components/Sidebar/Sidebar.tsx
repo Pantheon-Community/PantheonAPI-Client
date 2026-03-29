@@ -26,6 +26,8 @@ export const Sidebar: React.FC = () => {
                     </InternalLink>
                 )}
 
+                <InternalLink href="/roles">Roles</InternalLink>
+
                 <InternalLink href="/settings">Settings</InternalLink>
 
                 <InternalLink href="/components">Components</InternalLink>

@@ -8,12 +8,14 @@ import { HomePage } from "./pages/HomePage/HomePage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage/NotFoundPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
+import { RolesPage } from "./pages/RolesPage/RolesPage";
 import { SettingsPage } from "./pages/SettingsPage/SettingsPage";
 
 const homePage = <HomePage />;
 const settingsPage = <SettingsPage />;
 const loginPage = <LoginPage />;
 const profilePage = <ProfilePage />;
+const rolesPage = <RolesPage />;
 const componentsPage = <ComponentsPage />;
 const notFoundPage = <NotFoundPage />;
 
@@ -28,6 +30,7 @@ export const App: React.FC = () => (
                 <Route path="/settings" element={settingsPage} />
                 <Route path="/login" element={loginPage} />
                 <Route path="/profile" element={profilePage} />
+                <Route path="/roles" element={rolesPage} />
                 <Route path="/components" element={componentsPage} />
                 <Route path="*" element={notFoundPage} />
             </Routes>

@@ -86,7 +86,7 @@ export const ComponentsPage: React.FC = () => {
 
     const openDialogBase = useCallback(() => {
         setDialogEl(
-            <DialogBase title="Dialog Base" onClose={closeDialog}>
+            <DialogBase title="Dialog Base" isBad={false} onClose={closeDialog}>
                 <p>Dialog base description.</p>
             </DialogBase>,
         );

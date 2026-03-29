@@ -79,4 +79,8 @@
             color: var(--text-good);
         }
     }
+
+    &[type="text"] {
+        min-width: 320px;
+    }
 }

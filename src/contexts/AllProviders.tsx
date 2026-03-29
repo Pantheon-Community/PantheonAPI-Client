@@ -1,6 +1,8 @@
 import { BrowserRouter } from "react-router";
 import { CurrentUserProvider } from "./CurrentUser/CurrentUserContext";
 import { PantheonApiProvider } from "./PantheonApi/PantheonApiContext";
+import { PermissionsContextProvider } from "./Permissions/PermissionsContext";
+import { RolesContextProvider } from "./Roles/RolesContext";
 import { SettingsProvider } from "./Settings/SettingsContext";
 import { UserSessionsProvider } from "./UserSessions/UserSessionsContext";
 
@@ -9,7 +11,11 @@ export const AllProviders: React.FC<{ children: React.ReactNode }> = ({ children
         <SettingsProvider>
             <PantheonApiProvider>
                 <CurrentUserProvider>
-                    <UserSessionsProvider>{children}</UserSessionsProvider>
+                    <UserSessionsProvider>
+                        <RolesContextProvider>
+                            <PermissionsContextProvider>{children}</PermissionsContextProvider>
+                        </RolesContextProvider>
+                    </UserSessionsProvider>
                 </CurrentUserProvider>
             </PantheonApiProvider>
         </SettingsProvider>
