@@ -36,6 +36,9 @@ jobs:
             - name: Build Static Files
               run: bun run build
 
+            - name: Add Environment Variables
+              run: bun run scripts/putCommitHash.ts
+
             - name: Deploy to Cloudflare Pages
               uses: cloudflare/wrangler-action@v3
               with:
