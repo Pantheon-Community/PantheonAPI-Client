@@ -34,7 +34,8 @@
         "target": "ESNext",
 
         // Completeness
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "noUncheckedSideEffectImports": false
     },
 
     "include": ["src", "shared"]
