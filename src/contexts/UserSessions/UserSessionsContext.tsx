@@ -53,7 +53,7 @@ export const UserSessionsProvider: React.FC<{ children: React.ReactNode }> = ({ 
             if (currentUser?.token === undefined) return;
 
             const response = await makeRequest(`/users/@me/sessions/${id}`, {
-                method: "delete",
+                method: "DELETE",
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
                 },

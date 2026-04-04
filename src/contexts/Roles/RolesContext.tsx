@@ -68,7 +68,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
             if (currentUser?.token === undefined) return;
 
             const createdId = await makeJsonRequest<RoleId>("/roles", {
-                method: "post",
+                method: "POST",
                 body: JSON.stringify(input),
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
@@ -99,7 +99,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
             const { id, ...rest } = input;
 
             const response = await makeRequest(`/roles/${id}`, {
-                method: "patch",
+                method: "PATCH",
                 body: JSON.stringify(rest satisfies RoleInput),
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
@@ -133,7 +133,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
             if (currentUser?.token === undefined) return;
 
             const response = await makeRequest(`/roles/${id}`, {
-                method: "delete",
+                method: "DELETE",
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
                     accept: "application/json",

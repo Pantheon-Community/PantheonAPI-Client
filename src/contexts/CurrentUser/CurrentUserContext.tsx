@@ -62,7 +62,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const response = await makeJsonRequest<AuthResponse>(
                 "/login",
                 {
-                    method: "post",
+                    method: "POST",
                     body: JSON.stringify({ code, redirectUri } satisfies LoginRequest),
                     headers: { accept: "application/json", "content-type": "application/json" },
                 },
@@ -90,7 +90,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         await makeRequest(
             "/logout",
             {
-                method: "post",
+                method: "POST",
                 headers: { authorization: `Bearer ${currentUser.token}` },
             },
             { isAuthRelated: true },
@@ -110,7 +110,7 @@ export const CurrentUserProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const response = await makeJsonRequest<AuthResponse>(
             "/refresh",
             {
-                method: "post",
+                method: "POST",
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
                     accept: "application/json",

@@ -19,7 +19,7 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
         (steam: SteamUserWithTimes) => {
             return async () => {
                 const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
-                    method: "put",
+                    method: "PUT",
                     headers: { authorization: `Bearer ${currentUser.token}` },
                 });
 
@@ -36,7 +36,7 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
 
     const clearPrimaryConnection = useCallback(async () => {
         const response = await makeRequest("/users/@me/steam-users/primary", {
-            method: "delete",
+            method: "DELETE",
             headers: { authorization: `Bearer ${currentUser.token}` },
         });
 
