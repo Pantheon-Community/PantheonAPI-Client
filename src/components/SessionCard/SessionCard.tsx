@@ -20,7 +20,8 @@ interface SessionCardProps {
 }
 
 export const SessionCard: React.FC<SessionCardProps> = ({ session, onDelete }) => {
-    const { startedAt, ip, userAgent, origin, lastActionAt } = session;
+    const { startedAt, fingerprint, lastActionAt } = session;
+    const { ip, userAgent, origin } = fingerprint;
 
     const getLastActiveTime = useCallback(() => {
         return durationShort(Date.now(), new Date(lastActionAt).getTime());
@@ -42,6 +43,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({ session, onDelete }) =
                 return { src: OperaLogo, alt: "Opera browser logo" };
             case "Safari":
                 return { src: SafariLogo, alt: "Apple Safari logo" };
+            case null:
             default:
                 return { src: UnknownLogo, alt: "eyes staring into your soul" };
         }

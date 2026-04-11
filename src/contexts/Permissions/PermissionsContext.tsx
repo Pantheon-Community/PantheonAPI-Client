@@ -1,6 +1,6 @@
 import type { PermissionsObject } from "@/shared/types/Permissions/PermissionsObject";
 import { type Role, type RoleId, type RoleLevel } from "@/shared/types/Role";
-import { flattenPermissions, hasPermission } from "@/shared/utils/PermissionHelpers";
+import { flattenPermissions, hasPermission } from "@/shared/utils/permissions";
 import { notImplementedFunction } from "@/utils/notImplementedFn";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useCurrentUser } from "../CurrentUser/CurrentUserContext";

@@ -1,6 +1,6 @@
 import { BASE_STORAGE_KEY } from "@/constants/baseStorageKey";
 import { useSessionStorage } from "@/hooks/useSessionStorage";
-import type { Role, RoleId, RoleInput } from "@/shared/types/Role";
+import type { Role, RoleId, RolePayload } from "@/shared/types/Role";
 import { notImplementedFunction } from "@/utils/notImplementedFn";
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { useCurrentUser } from "../CurrentUser/CurrentUserContext";
@@ -13,7 +13,7 @@ interface RolesContextType {
 
     fetch(controller: AbortController): Promise<void>;
 
-    addRole(role: RoleInput): Promise<void>;
+    addRole(role: RolePayload): Promise<void>;
 
     updateRole(role: Role): Promise<void>;
 
@@ -64,7 +64,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
 
     const addRole = useCallback(
-        async (input: RoleInput) => {
+        async (input: RolePayload) => {
             if (currentUser?.token === undefined) return;
 
             const createdId = await makeJsonRequest<RoleId>("/roles", {
@@ -86,10 +86,20 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
                     return null;
                 }
 
-                return [...prev, { id: createdId, ...input }];
+                return [
+                    ...prev,
+                    {
+                        id: createdId,
+                        ...input,
+                        createdBy: currentUser.user.id,
+                        createdAt: new Date().toISOString(),
+                        lastUpdatedBy: currentUser.user.id,
+                        lastUpdatedAt: new Date().toISOString(),
+                    },
+                ];
             });
         },
-        [makeJsonRequest, setRoles, currentUser?.token],
+        [makeJsonRequest, setRoles, currentUser?.token, currentUser?.user.id],
     );
 
     const updateRole = useCallback(
@@ -100,7 +110,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
             const response = await makeRequest(`/roles/${id}`, {
                 method: "PATCH",
-                body: JSON.stringify(rest satisfies RoleInput),
+                body: JSON.stringify(rest satisfies RolePayload),
                 headers: {
                     authorization: `Bearer ${currentUser.token}`,
                     accept: "application/json",

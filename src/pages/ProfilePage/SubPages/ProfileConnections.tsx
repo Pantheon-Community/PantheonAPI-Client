@@ -2,21 +2,39 @@ import { StatefulButton } from "@/components/Buttons/StatefulButton/StatefulButt
 import { SteamUserCard } from "@/components/SteamUserCard/SteamUserCard";
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
 import { usePantheonApi } from "@/contexts/PantheonApi/PantheonApiContext";
+import { usePermissions } from "@/contexts/Permissions/PermissionsContext";
+import { UserPermissions } from "@/shared/types/Permissions/UserPermissions";
 import type { AuthResponse } from "@/shared/types/Responses/AuthResponse";
-import type { SteamUserWithTimes } from "@/shared/types/SteamUser";
-import { useCallback } from "react";
+import type { SteamUser } from "@/shared/types/SteamUser";
+import { useCallback, useMemo } from "react";
 import "./ProfileConnections.css";
 
 export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ currentUser }) => {
     const { makeRequest, makeJsonRequest } = usePantheonApi();
 
     const { setCurrentUser } = useCurrentUser();
+    const { hasPermission } = usePermissions();
 
-    const mainConnection = currentUser.user.steam;
+    const mainConnection = useMemo(() => {
+        if (currentUser.user.steamId === null) {
+            return null;
+        }
+
+        return currentUser.steamUsers.find((x) => x.id === currentUser.user.steamId) ?? null;
+    }, [currentUser.user.steamId, currentUser.steamUsers]);
+
+    const canClearMainConnection = useMemo(() => {
+        if (!hasPermission({ userPermissions: UserPermissions.DeletePrimaryConnection })) {
+            return false;
+        }
+
+        return !!mainConnection;
+    }, [hasPermission, mainConnection]);
+
     const connections = currentUser.steamUsers;
 
     const makeSelectHandler = useCallback(
-        (steam: SteamUserWithTimes) => {
+        (steam: SteamUser) => {
             return async () => {
                 const response = await makeRequest(`/users/@me/steam-users/primary/${steam.id}`, {
                     method: "PUT",
@@ -26,7 +44,7 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
                 if (response) {
                     setCurrentUser((prev) => {
                         if (prev === null) return null;
-                        return { ...prev, user: { ...prev.user, steam } };
+                        return { ...prev, user: { ...prev.user, steamId: steam.id } };
                     });
                 }
             };
@@ -43,13 +61,13 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
         if (response) {
             setCurrentUser((prev) => {
                 if (prev === null) return null;
-                return { ...prev, user: { ...prev.user, steam: null } };
+                return { ...prev, user: { ...prev.user, steamId: null } };
             });
         }
     }, [currentUser.token, setCurrentUser, makeRequest]);
 
     const refreshUserConnections = useCallback(async () => {
-        const response = await makeJsonRequest<SteamUserWithTimes[]>("/users/@me/steam-users", {
+        const response = await makeJsonRequest<SteamUser[]>("/users/@me/steam-users", {
             headers: {
                 authorization: `Bearer ${currentUser.token}`,
                 accept: "application/json",
@@ -70,7 +88,7 @@ export const ProfileConnections: React.FC<{ currentUser: AuthResponse }> = ({ cu
             <h3>
                 <span>Primary Connection</span>
 
-                {!!mainConnection && (
+                {canClearMainConnection && (
                     <StatefulButton
                         onClick={clearPrimaryConnection}
                         textDo="Clear"

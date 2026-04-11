@@ -1,5 +1,5 @@
 import type { PermissionsInfo } from "@/shared/constants/permissions/PermissionsInfo";
-import { split } from "@/shared/utils/PermissionHelpers";
+import { split } from "@/shared/utils/bitfieldHelpers";
 import { useCallback, useMemo } from "react";
 import "./DetailedPermissionsList.css";
 

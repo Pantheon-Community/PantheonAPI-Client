@@ -5,10 +5,12 @@ import { useRoles } from "@/contexts/Roles/RolesContext";
 import { Categories } from "@/shared/constants/permissions/Categories";
 import { GeneralPermissionInfo } from "@/shared/constants/permissions/GeneralPermissionsInfo";
 import { UserPermissionsInfo } from "@/shared/constants/permissions/UserPermissionsInfo";
-import { GeneralPermissions } from "@/shared/types/Permissions/GeneralPermissions";
-import { UserPermissions } from "@/shared/types/Permissions/UserPermissions";
-import { type Role, type RoleInput, type RoleLevel } from "@/shared/types/Role";
-import { ALL_GENERAL_PERMISSIONS, ALL_USER_PERMISSIONS } from "@/shared/utils/PermissionHelpers";
+import {
+    ALL_GENERAL_PERMISSIONS,
+    GeneralPermissions,
+} from "@/shared/types/Permissions/GeneralPermissions";
+import { ALL_USER_PERMISSIONS, UserPermissions } from "@/shared/types/Permissions/UserPermissions";
+import { type Role, type RoleLevel, type RolePayload } from "@/shared/types/Role";
 import { useCallback, useMemo, useState } from "react";
 import { RoleEditRow } from "./RoleEditRow";
 import "./RolesPage.css";
@@ -23,13 +25,13 @@ export const RolesPage: React.FC = () => {
 
     const [editContext, setEditContext] = useState<Role>();
 
-    const [addContext, setAddContext] = useState<RoleInput>();
+    const [addContext, setAddContext] = useState<RolePayload>();
 
     const handleClickAdd = useCallback(() => {
         setAddContext({
             name: "",
-            icon: null,
-            category: null,
+            icon: "",
+            category: "",
             level: 0 as RoleLevel,
             permissions: {
                 generalPermissions: GeneralPermissions.None,

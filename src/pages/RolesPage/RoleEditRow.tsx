@@ -3,11 +3,11 @@ import { DialogBase } from "@/components/Dialogs/DialogBase/DialogBase";
 import { PermissionsList } from "@/components/PermissionsList/PermissionsList";
 import { usePermissions } from "@/contexts/Permissions/PermissionsContext";
 import type { PermissionsObject } from "@/shared/types/Permissions/PermissionsObject";
-import type { RoleInput, RoleLevel } from "@/shared/types/Role";
+import type { RoleLevel, RolePayload } from "@/shared/types/Role";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./RoleEditRow.css";
 
-interface RoleEditRowProps<T extends RoleInput = RoleInput> {
+interface RoleEditRowProps<T extends RolePayload = RolePayload> {
     data: T;
 
     onCreate?(data: T): Promise<void>;
@@ -19,7 +19,7 @@ interface RoleEditRowProps<T extends RoleInput = RoleInput> {
     onDelete?(data: T): Promise<void>;
 }
 
-export const RoleEditRow: React.FC<RoleEditRowProps> = <T extends RoleInput>(
+export const RoleEditRow: React.FC<RoleEditRowProps> = <T extends RolePayload>(
     props: RoleEditRowProps<T>,
 ) => {
     const { data, onCreate, onSave, onCancel, onDelete } = props;

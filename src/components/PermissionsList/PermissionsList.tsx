@@ -1,11 +1,9 @@
 import { GeneralPermissionInfo } from "@/shared/constants/permissions/GeneralPermissionsInfo";
 import type { PermissionsInfo } from "@/shared/constants/permissions/PermissionsInfo";
 import { UserPermissionsInfo } from "@/shared/constants/permissions/UserPermissionsInfo";
-import {
-    ALL_GENERAL_PERMISSIONS,
-    ALL_USER_PERMISSIONS,
-    split,
-} from "@/shared/utils/PermissionHelpers";
+import { ALL_GENERAL_PERMISSIONS } from "@/shared/types/Permissions/GeneralPermissions";
+import { ALL_USER_PERMISSIONS } from "@/shared/types/Permissions/UserPermissions";
+import { split } from "@/shared/utils/bitfieldHelpers";
 import { useCallback, useMemo, useState } from "react";
 import { DetailedPermissionsList } from "../DetailedPermissionsList/DetailedPermissionsList";
 import { DialogBase } from "../Dialogs/DialogBase/DialogBase";
