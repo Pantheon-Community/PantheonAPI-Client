@@ -55,6 +55,14 @@ const steamUserA: SteamUser = {
         lastSeenAt: new Date().toISOString(),
         timesSeen: 0,
     },
+    groupName: null,
+    economyStats: {
+        balance: 0,
+        lastLoginBonusGivenAt: null,
+        lifetimeBalance: 0,
+        lifetimePurchaseCount: 0,
+        loginStreak: 0,
+    },
 };
 
 const steamUserB: SteamUser = {
@@ -67,6 +75,14 @@ const steamUserB: SteamUser = {
         firstSeenAt: new Date(0).toISOString(),
         lastSeenAt: new Date().toISOString(),
         timesSeen: 0,
+    },
+    groupName: null,
+    economyStats: {
+        balance: 0,
+        lastLoginBonusGivenAt: null,
+        lifetimeBalance: 0,
+        lifetimePurchaseCount: 0,
+        loginStreak: 0,
     },
 };
 
