@@ -1,0 +1,46 @@
+.tokens-page {
+    > h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    > table {
+        border-collapse: collapse;
+
+        td, th {
+            border: solid 1px var(--border-main);
+            padding: 0.5em;
+        }
+
+        td.label {
+            display: flex;
+            justify-content: space-between;
+            gap: 1em;
+        }
+
+        td.actions {
+            border: none;
+            display: flex;
+            gap: 1em;
+            flex-direction: column;
+        }
+
+        tr:nth-child(odd) {
+            > td:not(.actions) {
+                background-color: color-mix(in srgb, var(--bg-quarter-secondary) 75%, transparent);
+            }
+        }
+
+        tr:hover {
+            > td:not(.actions) {
+                background-color: var(--bg-half-secondary);
+            }
+        }
+    }
+
+    > .page-buttons {
+        display: flex;
+        gap: 1em;
+    }
+}

@@ -14,17 +14,23 @@ interface StatefulButtonProps extends Omit<
 
     /** @example "Loaded!" */
     textDone: string;
+
+    preOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => boolean;
 }
 
 /** A `<button>` element with state dependent on an asynchronous action. */
 export const StatefulButton: React.FC<StatefulButtonProps> = (props) => {
-    const { onClick, disabled, textDo, textDoing, textDone, ...rest } = props;
+    const { onClick, disabled, textDo, textDoing, textDone, preOnClick, ...rest } = props;
 
     const [isDoingThing, setIsDoingThing] = useState(false);
     const [justDidThing, setJustDidThing] = useState(false);
 
     const handleClick = useCallback(
         async (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (preOnClick !== undefined && !preOnClick(e)) {
+                return;
+            }
+
             setIsDoingThing(true);
 
             try {
@@ -34,7 +40,7 @@ export const StatefulButton: React.FC<StatefulButtonProps> = (props) => {
                 setIsDoingThing(false);
             }
         },
-        [onClick],
+        [onClick, preOnClick],
     );
 
     useEffect(() => {

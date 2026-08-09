@@ -81,7 +81,10 @@ export const PantheonApiProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
                 if (rateLimitTimeRemaining !== null) {
                     setRateLimitEndsAt(Date.now() + 1000 * rateLimitTimeRemaining);
-                } else if (!isAbortError(error)) {
+                } else if (
+                    !isAbortError(error) &&
+                    (!flags?.suppress404 || response?.status !== 404)
+                ) {
                     console.error(error);
 
                     setLatestError({

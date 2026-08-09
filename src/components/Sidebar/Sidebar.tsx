@@ -1,4 +1,7 @@
 import { useCurrentUser } from "@/contexts/CurrentUser/CurrentUserContext";
+import { usePermissions } from "@/contexts/Permissions/PermissionsContext";
+import { GeneralPermissions } from "@/shared/types/Permissions/GeneralPermissions";
+import { useMemo } from "react";
 import { InternalLink } from "../Links/InternalLink/InternalLink";
 import { ProfilePicture } from "../ProfilePicture/ProfilePicture";
 import "./Sidebar.css";
@@ -11,6 +14,12 @@ declare global {
 
 export const Sidebar: React.FC = () => {
     const { currentUser } = useCurrentUser();
+
+    const { hasPermission } = usePermissions();
+
+    const canSeeTokensPage = useMemo(() => {
+        return hasPermission({ generalPermissions: GeneralPermissions.EditTokens });
+    }, [hasPermission]);
 
     return (
         <div className="sidebar">
@@ -33,6 +42,8 @@ export const Sidebar: React.FC = () => {
                 )}
 
                 <InternalLink href="/roles">Roles</InternalLink>
+
+                {canSeeTokensPage && <InternalLink href="/tokens">Tokens</InternalLink>}
 
                 <InternalLink href="/settings">Settings</InternalLink>
 

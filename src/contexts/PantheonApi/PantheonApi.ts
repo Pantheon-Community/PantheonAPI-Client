@@ -2,6 +2,8 @@ import type { PantheonErrorData } from "@/types/PantheonErrorData";
 
 export interface RequestFlags {
     isAuthRelated?: boolean;
+
+    suppress404?: boolean;
 }
 
 export interface PantheonApi {
