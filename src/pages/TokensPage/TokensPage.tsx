@@ -142,6 +142,10 @@ export const TokensPage: React.FC = () => {
     const doCheck = useCallback(async () => {
         const token = window.prompt("Please enter the token to check.")?.trim() ?? "";
 
+        if (token.length === 0) {
+            return;
+        }
+
         try {
             PLUGIN_TOKEN.validate(token);
         } catch (error) {
