@@ -74,6 +74,19 @@ export const TokensPage: React.FC = () => {
         return () => controller.abort();
     }, [fetch, shouldFetch]);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const controller = new AbortController();
+
+            void fetch(controller);
+
+            return () => {
+                clearInterval(interval);
+                controller.abort();
+            };
+        }, 10_000);
+    }, [fetch]);
+
     const doRefresh = useCallback(async () => {
         void fetch(new AbortController());
     }, [fetch]);
@@ -158,6 +171,19 @@ export const TokensPage: React.FC = () => {
                     textDone="Refreshed!"
                 />
             </h1>
+
+            <p>
+                These are tokens used by our plugins (e.g. Wall Street), bots, and generally any
+                service not directly associated with a single user.
+                <br />
+                For security reasons, you'll never see the value of the tokens themselves here, but
+                you can check if a token is valid using the "Check Existing Token" button below.
+                <br />
+                Try not to break anything by deleting in-use tokens unless it's absolutely necessary
+                :)
+                <br />
+                This page will refresh every 10 seconds.
+            </p>
 
             <table>
                 <thead>
