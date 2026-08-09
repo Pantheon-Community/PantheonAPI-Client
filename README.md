@@ -6,6 +6,7 @@ This repository is intended to be used as an ancillary development client for th
 
 [![CI](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/ci.yml/badge.svg)](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/ci.yml)
 [![Deploy](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/deploy.yml/badge.svg)](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/deploy.yml)
+[![CodeQL](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Pantheon-Community/PantheonAPI-Client/actions/workflows/codeql-analysis.yml)
 
 ### Links
 
