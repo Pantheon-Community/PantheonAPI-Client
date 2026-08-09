@@ -129,6 +129,7 @@ export const RolesContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
                     if (idx !== -1) {
                         const newRoles = [...prev];
                         newRoles[idx] = input;
+                        return newRoles;
                     }
 
                     return prev;
