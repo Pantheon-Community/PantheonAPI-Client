@@ -13,6 +13,9 @@ concurrency:
 env:
     NODE_ENV: production
 
+permissions:
+    contents: read
+
 jobs:
     deploy:
         name: Deploy to Production
